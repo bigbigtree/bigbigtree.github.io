@@ -1,0 +1,412 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>求子数组之和的最大值——编程之美 2.14 扩展问题 正确实现 | bigbigtree</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Liu Zeshu">
+    
+    <meta name="description" content="题目描述输入一个整形数组，数组里有正数也有负数。数组中连续的一个或多个整数组成一个子数组，每个子数组都有一个和。 求所有子数组的和的最大值，要求时间复杂度为O(n)。
+分析与解法使用动态规划求最大子数字和：s[i]表示data[i~n-1]以元素i开始的最大子数组和，a[i]表示data[i~n-1">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/apple.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/apple.png">
+    
+
+	
+	<link href="http://cdn.bootcss.com/highlight.js/8.2/styles/railscasts.min.css" rel="stylesheet">
+	<script src="http://cdn.bootcss.com/highlight.js/8.2/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+	
+
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="bigbigtree">bigbigtree</a></h1>
+				<h2 class="blog-motto">空谈误国 实干兴邦</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="http://www.cnblogs.com/bigbigtree/">博客园</a></li>
+					
+						<li><a href="http://bigbigtree.github.io/">Page</a></li>
+					
+						<li><a href="/about">关于我</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/12/08/maxSubSum/" title="求子数组之和的最大值——编程之美 2.14 扩展问题 正确实现" itemprop="url">求子数组之和的最大值——编程之美 2.14 扩展问题 正确实现</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://liuzeshu.com" title="Liu Zeshu">Liu Zeshu</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-12-08T08:44:57.000Z" itemprop="datePublished">Dec 8 2014</time>
+    更新日期:<time datetime="2014-12-08T08:50:08.000Z" itemprop="dateModified">Dec 8 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#题目描述"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分析与解法"><span class="toc-number">2.</span> <span class="toc-text">分析与解法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#扩展问题"><span class="toc-number">3.</span> <span class="toc-text">扩展问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#代码实现"><span class="toc-number">4.</span> <span class="toc-text">代码实现</span></a></li></ol>
+		</div>
+		
+		<h1 id="题目描述">题目描述</h1><p>输入一个整形数组，数组里有正数也有负数。数组中连续的一个或多个整数组成一个子数组，每个子数组都有一个和。 求所有子数组的和的最大值，要求时间复杂度为O(n)。<br><br></p>
+<h1 id="分析与解法">分析与解法</h1><p>使用动态规划求最大子数字和：<br>s[i]表示data[i~n-1]以元素i开始的最大子数组和，a[i]表示data[i~n-1]中的最大子数组和 ；<br>s[i]=max(s[i+1]+data[i], data[i]);<br>a[i]=max(a[i+1], s[i]);<br>由于数组s,a递推的时候，都只用到数组的前一个变量，所以可以用滚动数组节省空间。<br><br></p>
+<h1 id="扩展问题">扩展问题</h1><p>1) 如果数组首尾相连，即允许找到一组数字(A[i],···,A[n-1], A[0],···, A[j])，请使其和最大，怎么办？（书中答案错误，可以使用旋转数组的方法，时间复杂度n2，本文参考别人的想法，实现的算法复杂度为n）<br>2) 如果题目要求返回最大子数组的位置，算法应该如何改变？还能保持O(N)的复杂度么？<br><br></p>
+<h1 id="代码实现">代码实现</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &#60;cstdio&#62;&#10;/*&#10;&#20351;&#29992;&#21160;&#24577;&#35268;&#21010;&#27714;&#26368;&#22823;&#23376;&#25968;&#23383;&#21644;&#65306;&#10;s[i]&#34920;&#31034;data[i~n-1]&#20197;&#20803;&#32032;i&#24320;&#22987;&#30340;&#26368;&#22823;&#23376;&#25968;&#32452;&#21644;&#65292;a[i]&#34920;&#31034;data[i~n-1]&#20013;&#30340;&#26368;&#22823;&#23376;&#25968;&#32452;&#21644; &#65307;&#10;s[i]=max(s[i+1]+data[i], data[i]);&#10;a[i]=max(a[i+1], s[i]); &#10;&#30001;&#20110;&#25968;&#32452;s,a&#36882;&#25512;&#30340;&#26102;&#20505;&#65292;&#37117;&#21482;&#29992;&#21040;&#25968;&#32452;&#30340;&#21069;&#19968;&#20010;&#21464;&#37327;&#65292;&#25152;&#20197;&#21487;&#20197;&#29992;&#28378;&#21160;&#25968;&#32452;&#33410;&#30465;&#31354;&#38388;&#12290; &#10;*/&#10;int maxSum(int data[], int n)&#10;&#123;&#10;    int s = data[n-1];&#10;    int a = data[n-1];&#10;    for(int i = n-2; i&#62;=0; i--)&#10;    &#123;&#10;        if(s&#60;0)&#10;            s=0;&#10;        s+=data[i];&#10;        if(s &#62; a)&#10;            a = s;&#10;    &#125; &#10;    return a;&#10;&#125; &#10;/*&#10;&#22914;&#26524;&#35201;&#27714;&#36820;&#22238;&#26368;&#22823;&#23376;&#25968;&#32452;&#21644;&#30340;&#20301;&#32622;&#65292;&#22914;&#20309;&#22788;&#29702;&#65311;&#10;&#20351;&#29992;curEnd&#35760;&#24405;&#24403;&#21069;&#26368;&#22823;&#23383;&#25968;&#32452;&#21644;&#30340;&#32467;&#26463;&#20301;&#32622;&#65292;&#10;&#24403;s&#65288;&#20197;&#20803;&#32032;i&#24320;&#22987;&#30340;&#26368;&#22823;&#23376;&#25968;&#32452;&#21644;&#65289; &#23567;&#20110;&#38646;&#26102;&#65292;&#26356;&#26032;curEnd&#23383;&#25968;&#32452;&#26411;&#31471;&#26631;&#35760;&#65292;&#10;&#24403;a&#65288;&#24403;&#21069;&#30340;&#26368;&#22823;&#23376;&#25968;&#32452;&#21644;&#65289;&#21457;&#29983;&#21464;&#21270;&#26102;&#65292;&#26356;&#26032;&#26368;&#22823;&#23383;&#25968;&#32452;&#30340;&#26631;&#35760;Start&#65292;End &#10;*/ &#10;int maxSum2(int data[], int n,int &#38;start, int &#38;end)&#10;&#123;&#10;    int s = data[n-1];&#10;    int a = data[n-1];&#10;    int curEnd = n-1;&#10;    &#10;    start = end = n-1;&#10;    for(int i = n-2; i&#62;=0; i--)&#10;    &#123;&#10;        if(s&#60;0)&#10;        &#123;&#10;            s=0;&#10;            curEnd = i;&#10;        &#125;        &#10;        s+=data[i];&#10;        if(s &#62; a)&#10;        &#123;&#10;            a = s;&#10;            start = i;&#10;            end = curEnd;&#10;        &#125;&#10;            &#10;    &#125; &#10;    return a;&#10;&#125; &#10;/*&#10;&#22914;&#26524;&#25968;&#32452;arr[0],&#8230;,arr[n-1]&#39318;&#23614;&#30456;&#37051;&#65292;&#20063;&#23601;&#26159;&#20801;&#35768;&#25214;&#21040;&#19968;&#27573;&#25968;&#23383;arr[i],&#8230;,arr[n-1],arr[0],&#8230;,a[j]&#65292;&#20351;&#20854;&#21644;&#26368;&#22823;&#65292;&#35813;&#22914;&#20309;&#65311;&#10;&#32534;&#31243;&#20043;&#32654;&#30340;&#31572;&#26696;&#30340;&#24605;&#36335;&#26377;&#38382;&#39064;&#65292;&#35814;&#35265;&#65306; http://www.ahathinking.com/archives/120.html&#10;&#21442;&#32771;&#35813;&#25991;&#31639;&#27861;&#65292;&#21487;&#30693;&#22312;&#20801;&#35768;&#25968;&#32452;&#36328;&#30028;&#65288;&#39318;&#23614;&#30456;&#37051;&#65289;&#26102;&#65292;&#26368;&#22823;&#23376;&#25968;&#32452;&#30340;&#21644;&#20026;&#19979;&#38754;&#30340;&#26368;&#22823;&#20540;&#10;Maxsum=&#123; &#21407;&#38382;&#39064;&#30340;&#26368;&#22823;&#23376;&#25968;&#32452;&#21644;&#65307;&#25968;&#32452;&#25152;&#26377;&#20803;&#32032;&#24635;&#20540;-&#26368;&#23567;&#23376;&#25968;&#32452;&#21644; &#125;&#10;*/ &#10;int maxSum3(int data[], int n)&#10;&#123;&#10;    int maxs = data[n-1];&#10;    int maxa = data[n-1];&#10;    int sumAll = data[n-1];&#10;    &#10;    int mins = data[n-1];&#10;    int mina = data[n-1];&#10;    &#10;    for(int i = n-2; i&#62;=0; i--)&#10;    &#123;&#10;        sumAll+=data[i];&#10;        if(maxs&#60;0)&#10;            maxs=0;&#10;        maxs+=data[i];&#10;        if(maxs &#62; maxa)&#10;            maxa = maxs;&#10;        &#10;        if(mins&#62;0)&#10;            mins=0;&#10;        mins+=data[i];&#10;        if(mins &#60; mina)&#10;            mina = mins;&#10;    &#125; &#10;    int maxa2 = sumAll-mina;&#10;    return maxa&#62;maxa2?maxa:maxa2;&#10;&#125; &#10;int main()&#10;&#123;&#10;    /*&#10;    int d[]=&#123;&#10;        -4,-5,-6,-1,-5,-9&#10;    &#125;;*/&#10;    int d[]=&#123;&#10;        8,-10,60,3,-1,-6&#10;    &#125;;&#10;    int s,e;&#10;    int res = maxSum3(d,6);&#10;    printf(&#34;%d\n&#34;,res);&#10;&#125;</span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/编程之美/">编程之美</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/algorithm/">algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://liuzeshu.com/2014/12/08/maxSubSum/" data-title="求子数组之和的最大值——编程之美 2.14 扩展问题 正确实现 | bigbigtree" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/12/09/median-filter-haze-removal/" title="基于中值滤波的图像去雾算法">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  基于中值滤波的图像去雾算法</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/12/08/more-than-half-num/"  title="数组中出现次数超过一半的数字">
+ <strong>NEXT:</strong><br/> 
+ <span>数组中出现次数超过一半的数字
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/12/08/maxSubSum/" data-title="求子数组之和的最大值——编程之美 2.14 扩展问题 正确实现"" data-url="http://liuzeshu.com/2014/12/08/maxSubSum/""></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"bigbigtree"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#题目描述"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分析与解法"><span class="toc-number">2.</span> <span class="toc-text">分析与解法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#扩展问题"><span class="toc-number">3.</span> <span class="toc-text">扩展问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#代码实现"><span class="toc-number">4.</span> <span class="toc-text">代码实现</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<section class="author-info">
+		
+			<p> Never Too Late</p>
+		
+		
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2191697875" target="_blank" title="weibo"></a>
+		
+		
+		
+		<a href="https://github.com/bigbigtree" target="_blank" title="github"></a>
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  <section>  
+<h1>Visitor</h1>  
+<div>  
+    <p></p>  
+    <center>  
+   <a href="http://info.flagcounter.com/6JsW"><img src="http://s11.flagcounter.com/count/6JsW/bg_FFFFFF/txt_000000/border_CCCCCC/columns_2/maxflags_8/viewers_0/labels_1/pageviews_1/flags_0/" alt="Flag Counter" border="0"></a>
+    </center>  
+</div>  
+</section>  
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分類</p>
+		<ul>
+		
+			<li><a href="/categories/algorithm/" title="algorithm">algorithm<sup>5</sup></a></li>
+		
+			<li><a href="/categories/c/" title="c++">c++<sup>1</sup></a></li>
+		
+			<li><a href="/categories/data-structure/" title="data structure">data structure<sup>1</sup></a></li>
+		
+			<li><a href="/categories/image-processing/" title="image processing">image processing<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">歸檔</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a><span class="archive-list-count">6</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/binary-search/" title="binary_search">binary_search<sup>1</sup></a></li>
+		
+			<li><a href="/tags/boost/" title="boost">boost<sup>1</sup></a></li>
+		
+			<li><a href="/tags/haze-removal/" title="haze removal">haze removal<sup>1</sup></a></li>
+		
+			<li><a href="/tags/median-filter/" title="median filter">median filter<sup>1</sup></a></li>
+		
+			<li><a href="/tags/剑指offer/" title="剑指offer">剑指offer<sup>2</sup></a></li>
+		
+			<li><a href="/tags/编程之美/" title="编程之美">编程之美<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"bigbigtree"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

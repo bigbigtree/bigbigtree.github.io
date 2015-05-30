@@ -1,0 +1,480 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>一种较完美的二分搜索实现 | bigbigtree</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Liu Zeshu">
+    
+    <meta name="description" content="算法思想　　二分搜索，也称二分查找、折半搜索，是一种在有序数组中查找特定元素的搜索算法。搜索从数组的中间元素开始，如果中间元素刚好是要查找的元素，则搜索结束，如果要查找的特定元素大于（小于）中间元素，则在数组大于（小于）中间元素的一半中查找。该算法的递归实现比较容易理解，思路更清晰，但效率方面仍有提">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/apple.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/apple.png">
+    
+
+	
+	<link href="http://cdn.bootcss.com/highlight.js/8.2/styles/railscasts.min.css" rel="stylesheet">
+	<script src="http://cdn.bootcss.com/highlight.js/8.2/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+	
+
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="bigbigtree">bigbigtree</a></h1>
+				<h2 class="blog-motto">空谈误国 实干兴邦</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="http://www.cnblogs.com/bigbigtree/">博客园</a></li>
+					
+						<li><a href="http://bigbigtree.github.io/">Page</a></li>
+					
+						<li><a href="/about">关于我</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/12/05/一种较完美的二分搜索实现/" title="一种较完美的二分搜索实现" itemprop="url">一种较完美的二分搜索实现</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://liuzeshu.com" title="Liu Zeshu">Liu Zeshu</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-12-05T13:54:37.000Z" itemprop="datePublished">Dec 5 2014</time>
+    更新日期:<time datetime="2014-12-08T07:53:19.000Z" itemprop="dateModified">Dec 8 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#算法思想"><span class="toc-number">1.</span> <span class="toc-text">算法思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法实现"><span class="toc-number">2.</span> <span class="toc-text">算法实现</span></a></li></ol>
+		</div>
+		
+		<h2 id="算法思想">算法思想</h2><p>　　二分搜索，也称二分查找、折半搜索，是一种在有序数组中查找特定元素的搜索算法。搜索从数组的中间元素开始，如果中间元素刚好是要查找的元素，则搜索结束，如果要查找的特定元素大于（小于）中间元素，则在数组大于（小于）中间元素的一半中查找。该算法的递归实现比较容易理解，思路更清晰，但效率方面仍有提高的空间。</p>
+<h2 id="算法实现">算法实现</h2><p>递归实现：</p>
+<pre><code><span class="built_in">int</span> binary_search( <span class="keyword">const</span> <span class="built_in">int</span> arr[], <span class="built_in">int</span> low, <span class="built_in">int</span> high, <span class="built_in">int</span> <span class="variable">key</span>)
+{
+   <span class="built_in">int</span> mid = low+(high-low)/<span class="number">2</span>; <span class="comment">// Do not use (low+high)/2 which might encounter overflow issue</span>
+   <span class="keyword">if</span>(low&gt;high)
+       <span class="keyword">return</span> -<span class="number">1</span>;
+   <span class="keyword">else</span>
+     {
+       <span class="keyword">if</span>(arr[mid]==<span class="variable">key</span>)
+          <span class="keyword">return</span> mid;
+       <span class="keyword">else</span> <span class="keyword">if</span>(arr[mid]&gt;<span class="variable">key</span>)
+          <span class="keyword">return</span> binary_search(arr,low,mid-<span class="number">1</span>,<span class="variable">key</span>);
+       <span class="keyword">else</span> 
+          <span class="keyword">return</span> binary_search(arr,mid+<span class="number">1</span>,high,<span class="variable">key</span>);
+     }
+}
+</code></pre><p><strong>tips:</strong></p>
+<ul>
+<li><p>需要注意的是int mid = low+(high-low)/2;而不是(low+high)/2，避免了溢出的情况。</p>
+</li>
+<li><p>当有序数组存在等值时，该方法需要根据指定的规则选取第一个（最后一个）的等值，此时只需要从mid向前（后）寻找即可。</p>
+</li>
+<li><p>由于寻找第一个、最后一个等值的时候，每次移动的步长为1，移动效率较低，此时可以再次使用二分查找的方法，加快寻找速度。</p>
+</li>
+</ul>
+<pre><code><span class="comment">#include &lt;cstdio&gt;</span>
+
+//flag <span class="number">1</span>表示查找第一个等值 <span class="number">0</span>查找最后一个等值 
+<span class="keyword">int</span> binarySearch(<span class="keyword">int</span> *data, <span class="keyword">int</span> <span class="keyword">length</span>,<span class="keyword">int</span> val,<span class="keyword">int</span> flag)
+{
+    <span class="keyword">if</span>(!data)<span class="keyword">return</span> -<span class="number">1</span>;
+    <span class="keyword">int</span> left,right,res;
+    left = <span class="number">0</span>;
+    right = <span class="keyword">length</span>-<span class="number">1</span>;
+
+    res = -<span class="number">1</span>;
+
+    <span class="keyword">while</span>(left&lt;=right)
+    {
+        <span class="keyword">int</span> mid = left + (right-left)/<span class="number">2</span>;
+        <span class="keyword">if</span>(data[mid]==val)
+        {
+            res = mid;
+            <span class="keyword">if</span>(flag==<span class="number">0</span>)
+            {
+                right=mid-<span class="number">1</span>;
+            }
+            <span class="keyword">else</span> <span class="keyword">if</span>(flag==<span class="number">1</span>)
+            {
+                left=mid+<span class="number">1</span>;
+            }
+            <span class="keyword">else</span>
+                <span class="keyword">return</span> mid;<span class="regexp">//</span>返回索引值
+        }  
+        <span class="keyword">else</span> <span class="keyword">if</span>(data[mid]&lt;val)
+            left=mid+<span class="number">1</span>;
+        <span class="keyword">else</span>
+            right= mid-<span class="number">1</span>;
+    }
+    <span class="keyword">return</span> res;
+}
+
+//测试代码
+<span class="keyword">int</span> main()
+{
+    <span class="keyword">int</span> data[<span class="number">10</span>]={
+        <span class="number">4</span>,<span class="number">5</span>,<span class="number">23</span>,<span class="number">60</span>,<span class="number">60</span>,<span class="number">86</span>,<span class="number">88</span>,<span class="number">89</span>,<span class="number">89</span>,<span class="number">101</span>
+    };
+    <span class="keyword">printf</span>(<span class="string">"<span class="variable">%d</span>\n"</span>,binarySearch(data,<span class="number">10</span>,<span class="number">4</span>,<span class="number">1</span>));
+
+    <span class="keyword">printf</span>(<span class="string">"<span class="variable">%d</span>\n"</span>,binarySearch(data,<span class="number">10</span>,<span class="number">60</span>,<span class="number">1</span>));
+    <span class="keyword">printf</span>(<span class="string">"<span class="variable">%d</span>\n"</span>,binarySearch(data,<span class="number">10</span>,<span class="number">60</span>,<span class="number">0</span>));
+    <span class="keyword">printf</span>(<span class="string">"<span class="variable">%d</span>\n"</span>,binarySearch(data,<span class="number">10</span>,<span class="number">55</span>,<span class="number">0</span>));
+    <span class="keyword">printf</span>(<span class="string">"<span class="variable">%d</span>\n"</span>,binarySearch(data,<span class="number">10</span>,<span class="number">89</span>,<span class="number">0</span>));
+    <span class="keyword">printf</span>(<span class="string">"<span class="variable">%d</span>\n"</span>,binarySearch(data,<span class="number">10</span>,<span class="number">89</span>,<span class="number">1</span>));
+    <span class="keyword">printf</span>(<span class="string">"<span class="variable">%d</span>\n"</span>,binarySearch(data,<span class="number">10</span>,<span class="number">4</span>,<span class="number">0</span>));
+    <span class="keyword">printf</span>(<span class="string">"<span class="variable">%d</span>\n"</span>,binarySearch(data,<span class="number">10</span>,<span class="number">100</span>,<span class="number">0</span>));
+}
+</code></pre><p>转载请注明：<a href="http://liuzeshu.com">http://liuzeshu.com</a> or <a href="http://www.cnblogs.com/bigbigtree" target="_blank" rel="external">http://www.cnblogs.com/bigbigtree</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/binary-search/">binary_search</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/algorithm/">algorithm</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://liuzeshu.com/2014/12/05/一种较完美的二分搜索实现/" data-title="一种较完美的二分搜索实现 | bigbigtree" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/12/08/more-than-half-num/" title="数组中出现次数超过一半的数字">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  数组中出现次数超过一半的数字</span>
+</a>
+</div>
+
+
+</nav>
+
+	
+
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/12/05/一种较完美的二分搜索实现/" data-title="一种较完美的二分搜索实现"" data-url="http://liuzeshu.com/2014/12/05/一种较完美的二分搜索实现/""></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"bigbigtree"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#算法思想"><span class="toc-number">1.</span> <span class="toc-text">算法思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法实现"><span class="toc-number">2.</span> <span class="toc-text">算法实现</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<section class="author-info">
+		
+			<p> Never Too Late</p>
+		
+		
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2191697875" target="_blank" title="weibo"></a>
+		
+		
+		
+		<a href="https://github.com/bigbigtree" target="_blank" title="github"></a>
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  <section>  
+<h1>Visitor</h1>  
+<div>  
+    <p></p>  
+    <center>  
+   <a href="http://info.flagcounter.com/6JsW"><img src="http://s11.flagcounter.com/count/6JsW/bg_FFFFFF/txt_000000/border_CCCCCC/columns_2/maxflags_8/viewers_0/labels_1/pageviews_1/flags_0/" alt="Flag Counter" border="0"></a>
+    </center>  
+</div>  
+</section>  
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分類</p>
+		<ul>
+		
+			<li><a href="/categories/algorithm/" title="algorithm">algorithm<sup>5</sup></a></li>
+		
+			<li><a href="/categories/c/" title="c++">c++<sup>1</sup></a></li>
+		
+			<li><a href="/categories/data-structure/" title="data structure">data structure<sup>1</sup></a></li>
+		
+			<li><a href="/categories/image-processing/" title="image processing">image processing<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">歸檔</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a><span class="archive-list-count">6</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/binary-search/" title="binary_search">binary_search<sup>1</sup></a></li>
+		
+			<li><a href="/tags/boost/" title="boost">boost<sup>1</sup></a></li>
+		
+			<li><a href="/tags/haze-removal/" title="haze removal">haze removal<sup>1</sup></a></li>
+		
+			<li><a href="/tags/median-filter/" title="median filter">median filter<sup>1</sup></a></li>
+		
+			<li><a href="/tags/剑指offer/" title="剑指offer">剑指offer<sup>2</sup></a></li>
+		
+			<li><a href="/tags/编程之美/" title="编程之美">编程之美<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"bigbigtree"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

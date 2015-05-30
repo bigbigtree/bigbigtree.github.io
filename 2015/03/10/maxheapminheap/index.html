@@ -1,0 +1,419 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>最大堆最小堆 | bigbigtree</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Liu Zeshu">
+    
+    <meta name="description" content="最大堆最小堆实质是一颗完全二叉树，最大堆的特点：父节点值均大于子节点；最小堆的父节点值均小于子节点
+堆内部使用连续内存来存储堆内的值，因而可以根据当前节点推断子节点的索引值：
+
+节点i的父节点为(i-1)/2；
+节点j的左子结点：j * 2 + 1;
+节点j的右子结点：j * 2 + 2;
+
+以下代">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/apple.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/apple.png">
+    
+
+	
+	<link href="http://cdn.bootcss.com/highlight.js/8.2/styles/railscasts.min.css" rel="stylesheet">
+	<script src="http://cdn.bootcss.com/highlight.js/8.2/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+	
+
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="bigbigtree">bigbigtree</a></h1>
+				<h2 class="blog-motto">空谈误国 实干兴邦</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="http://www.cnblogs.com/bigbigtree/">博客园</a></li>
+					
+						<li><a href="http://bigbigtree.github.io/">Page</a></li>
+					
+						<li><a href="/about">关于我</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/03/10/maxheapminheap/" title="最大堆最小堆" itemprop="url">最大堆最小堆</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://liuzeshu.com" title="Liu Zeshu">Liu Zeshu</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-03-10T00:52:12.000Z" itemprop="datePublished">Mar 10 2015</time>
+    更新日期:<time datetime="2015-03-10T01:00:25.000Z" itemprop="dateModified">Mar 10 2015</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#最大堆最小堆"><span class="toc-number">1.</span> <span class="toc-text">最大堆最小堆</span></a></li></ol>
+		</div>
+		
+		<h1 id="最大堆最小堆">最大堆最小堆</h1><p>实质是一颗完全二叉树，最大堆的特点：父节点值均大于子节点；最小堆的父节点值均小于子节点</p>
+<p>堆内部使用连续内存来存储堆内的值，因而可以根据当前节点推断子节点的索引值：</p>
+<ul>
+<li>节点i的<strong>父节点</strong>为(i-1)/2；</li>
+<li>节点j的<strong>左子结点</strong>：j * 2 + 1;</li>
+<li>节点j的<strong>右子结点</strong>：j * 2 + 2;</li>
+</ul>
+<p>以下代码实现了最大堆最小堆，当比较函数使用<strong>std::greater</strong>得到最大堆，当比较函数使用<strong>std::less</strong>得到最小堆；</p>
+<p>代码及测试用例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">//&#26368;&#22823;&#26368;&#23567;&#22534;&#10;//MaxMinHeap.h&#10;#pragma once&#10;#include &#60;assert.h&#62;&#10;using namespace std;&#10;template &#60;typename T&#62;&#10;void mswap(T &#38;a, T &#38;b)&#10;&#123;&#10;    T tmp = a;&#10;    a = b;&#10;    b = tmp;&#10;&#125;&#10;template &#60;typename T,typename Compare = std::less&#60;T&#62;&#62;&#10;class MaxMinHeap&#10;&#123;&#10;public:&#10;    int hSize ;    //&#22534;&#31354;&#38388;&#10;    int hCurNum;//&#22534;&#20869;&#24050;&#21344;&#29992;&#31354;&#38388;&#10;    T *data;&#10;private:&#10;    Compare comp;//&#27604;&#36739;&#20989;&#25968;&#10;public:&#10;    MaxMinHeap(int size)&#10;    &#123;&#10;        hSize = size;&#10;        assert(hSize&#62;0);&#10;        data = new T[hSize];&#10;        hCurNum = 0;&#10;    &#125;;&#10;    ~MaxMinHeap(void)&#10;    &#123;&#10;        if(data!=NULL)&#10;            delete []data;&#10;    &#125;;&#10;    void headAdd(T num)&#10;    &#123;&#10;        if (hCurNum==hSize)&#10;        &#123;&#10;            if (comp(num,data[0]))//greater &#22823;&#39030;&#22534; &#20445;&#30041;&#26368;&#23567;&#30340;K&#20010;&#25968;&#65307;less &#23567;&#39030;&#22534; &#20445;&#30041;&#26368;&#22823;&#30340;K&#20010;&#25968;&#10;                return;&#10;            data[0]=num;&#10;            HeapFixDown(0,hCurNum);&#10;        &#125;&#10;        else&#10;        &#123;&#10;            data[hCurNum++]=num;&#10;            HeapFixUp(hCurNum-1);&#10;        &#125;&#10;    &#125;;&#10;    //&#26368;&#22823;&#22534;&#25490;&#24207;&#21518;&#24471;&#21040;&#21319;&#24207;&#24207;&#21015;&#65307;&#26368;&#23567;&#22534;&#25490;&#24207;&#21518;&#24471;&#21040;&#38477;&#24207;&#24207;&#21015;&#10;    void sort()&#10;    &#123;&#10;        for (int i=hCurNum-1; i &#62;=1 ; --i)&#10;        &#123;&#10;            mswap(data[i],data[0]);&#10;            HeapFixDown(0,i);&#10;        &#125;&#10;    &#125;&#10;    void GetHnum(T &#38;n)//&#33719;&#21462;&#26368;&#22823;&#22534;&#30340;&#26368;&#23567;&#20540;&#25110;&#32773;&#26368;&#23567;&#22534;&#30340;&#26368;&#22823;&#20540;&#10;    &#123;&#10;        n = data[0];&#10;    &#125;;&#10;    void HeapFixUp(int index)&#10;    &#123;&#10;        assert (index &#60; hCurNum);&#10;        T tmp=data[index];&#10;        int j = (index - 1)/2;//&#29238;&#33410;&#28857;&#10;        while(j&#62;=0 &#38;&#38; index !=0)&#10;        &#123;&#10;            if(comp(data[j],tmp))&#10;                break;&#10;            data[index]=data[j];&#10;            index = j;&#10;            j = (index - 1)/2;&#10;        &#125;&#10;        data[index]=tmp;&#10;    &#125;;&#10;    //&#20174;&#33410;&#28857;index&#24320;&#22987;&#36827;&#34892;&#21521;&#19979;&#35843;&#25972;&#10;    void HeapFixDown(int index, int n)&#10;    &#123;&#10;        assert(index&#60;hCurNum);&#10;        assert(n&#60;hCurNum);&#10;&#10;        T tmp=data[index];&#10;        int j = index*2+1;&#10;        while(j&#60;n)&#10;        &#123;&#10;            if(j+1 &#60; n &#38;&#38; comp(data[j+1],data[j]))//&#22823;&#39030;&#22534;&#20013;&#24038;&#21491;&#23401;&#23376;&#25214;&#26368;&#22823;&#30340;&#65292;&#23567;&#39030;&#22534;&#24038;&#21491;&#23401;&#23376;&#25214;&#26368;&#23567;&#30340;&#10;                ++j;&#10;            if(comp(tmp,data[j]))&#10;                break;&#10;            data[index]=data[j];&#10;            index = j;&#10;            j = index*2+1;&#10;        &#125;&#10;        data[index]=tmp;&#10;    &#125;;&#10;&#125;;&#10;//main.cpp&#10;#include &#60;functional&#62;&#10;#include &#60;iostream&#62;&#10;#include &#34;MaxMinHeap.h &#34;&#10;using namespace std;&#10;int main(int argc ,  char ** argv)&#10;&#123;&#10;    MaxMinHeap&#60;float,greater&#60;float&#62;&#62; test(20);&#10;&#10;    for (int i = 0 ;i &#60; 20; ++i)&#10;    &#123;&#10;        test.headAdd(-i*2+38);&#10;    &#125;&#10;    for (int i = 0 ; i &#60; 20 ; ++i)&#10;    &#123;&#10;        cout&#60;&#60;test.data[i]&#60;&#60;endl;&#10;    &#125;&#10;    test.sort();&#10;    for (int i = 0 ; i &#60; 20 ; ++i)&#10;    &#123;&#10;        cout&#60;&#60;test.data[i]&#60;&#60;&#34; &#34;;&#10;    &#125;&#10;    cout&#60;&#60;endl;&#10;    return 0;&#10;&#125;</span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/data-structure/">data structure</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://liuzeshu.com/2015/03/10/maxheapminheap/" data-title="最大堆最小堆 | bigbigtree" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/03/13/boost-threads-vs2010-md/" title="VS2010 编译 boost thread库">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  VS2010 编译 boost thread库</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/12/10/max-increase-arrays/"  title="最长递增子序列">
+ <strong>NEXT:</strong><br/> 
+ <span>最长递增子序列
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2015/03/10/maxheapminheap/" data-title="最大堆最小堆"" data-url="http://liuzeshu.com/2015/03/10/maxheapminheap/""></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"bigbigtree"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#最大堆最小堆"><span class="toc-number">1.</span> <span class="toc-text">最大堆最小堆</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<section class="author-info">
+		
+			<p> Never Too Late</p>
+		
+		
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2191697875" target="_blank" title="weibo"></a>
+		
+		
+		
+		<a href="https://github.com/bigbigtree" target="_blank" title="github"></a>
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  <section>  
+<h1>Visitor</h1>  
+<div>  
+    <p></p>  
+    <center>  
+   <a href="http://info.flagcounter.com/6JsW"><img src="http://s11.flagcounter.com/count/6JsW/bg_FFFFFF/txt_000000/border_CCCCCC/columns_2/maxflags_8/viewers_0/labels_1/pageviews_1/flags_0/" alt="Flag Counter" border="0"></a>
+    </center>  
+</div>  
+</section>  
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分類</p>
+		<ul>
+		
+			<li><a href="/categories/algorithm/" title="algorithm">algorithm<sup>5</sup></a></li>
+		
+			<li><a href="/categories/c/" title="c++">c++<sup>1</sup></a></li>
+		
+			<li><a href="/categories/data-structure/" title="data structure">data structure<sup>1</sup></a></li>
+		
+			<li><a href="/categories/image-processing/" title="image processing">image processing<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">歸檔</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a><span class="archive-list-count">6</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/binary-search/" title="binary_search">binary_search<sup>1</sup></a></li>
+		
+			<li><a href="/tags/boost/" title="boost">boost<sup>1</sup></a></li>
+		
+			<li><a href="/tags/haze-removal/" title="haze removal">haze removal<sup>1</sup></a></li>
+		
+			<li><a href="/tags/median-filter/" title="median filter">median filter<sup>1</sup></a></li>
+		
+			<li><a href="/tags/剑指offer/" title="剑指offer">剑指offer<sup>2</sup></a></li>
+		
+			<li><a href="/tags/编程之美/" title="编程之美">编程之美<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"bigbigtree"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

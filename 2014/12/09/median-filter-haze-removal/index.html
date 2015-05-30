@@ -1,0 +1,420 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>基于中值滤波的图像去雾算法 | bigbigtree</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Liu Zeshu">
+    
+    <meta name="description" content="本人研究生的方向为高分影像薄云去除算法研究，前段时间看到一篇中值滤波图像去雾算法文章，进行了初步实验，并和网上一篇博客的效果差不多，记录下该算法的流程和实验结果。
+算法原理该文章引入暗原色统计先验，使用中值滤波该方法平滑雾浓度图，达到保留场景深度发生突变的边缘的目的。对暗原色不太了解的可以参考基于图">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/apple.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/apple.png">
+    
+
+	
+	<link href="http://cdn.bootcss.com/highlight.js/8.2/styles/railscasts.min.css" rel="stylesheet">
+	<script src="http://cdn.bootcss.com/highlight.js/8.2/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+	
+
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="bigbigtree">bigbigtree</a></h1>
+				<h2 class="blog-motto">空谈误国 实干兴邦</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+                    <ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="http://www.cnblogs.com/bigbigtree/">博客园</a></li>
+					
+						<li><a href="http://bigbigtree.github.io/">Page</a></li>
+					
+						<li><a href="/about">关于我</a></li>
+					
+					<li>
+					
+					</li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div></li>
+
+				</ul>
+			</nav>	
+</div>
+
+    </header>
+    <div id="container" class="clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/12/09/median-filter-haze-removal/" title="基于中值滤波的图像去雾算法" itemprop="url">基于中值滤波的图像去雾算法</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://liuzeshu.com" title="Liu Zeshu">Liu Zeshu</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-12-09T11:05:23.000Z" itemprop="datePublished">Dec 9 2014</time>
+    更新日期:<time datetime="2014-12-09T12:44:25.000Z" itemprop="dateModified">Dec 9 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#算法原理"><span class="toc-number">1.</span> <span class="toc-text">算法原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法步骤"><span class="toc-number">2.</span> <span class="toc-text">算法步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#计算F(x,y)"><span class="toc-number">2.1.</span> <span class="toc-text">计算F(x,y)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#去除薄雾"><span class="toc-number">2.2.</span> <span class="toc-text">去除薄雾</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实验结果"><span class="toc-number">3.</span> <span class="toc-text">实验结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Matlab代码"><span class="toc-number">4.</span> <span class="toc-text">Matlab代码</span></a></li></ol>
+		</div>
+		
+		<p><strong>　　本人研究生的方向为高分影像薄云去除算法研究，前段时间看到一篇<a href="http://scholar.google.com/scholar?q=%E4%B8%80%E7%A7%8D%E5%8D%95%E5%B9%85%E5%9B%BE%E5%83%8F%E5%8E%BB%E9%9B%BE%E6%96%B9%E6%B3%95&btnG=&hl=zh-CN&as_sdt=0%2C5" target="_blank" rel="external">中值滤波图像去雾算法文章</a>，进行了初步实验，并和网上一篇博客的效果差不多，记录下该算法的流程和实验结果。</strong><br><br></p>
+<h2 id="算法原理">算法原理</h2><p>该文章引入暗原色统计先验，使用中值滤波该方法平滑雾浓度图，达到保留场景深度发生突变的边缘的目的。对暗原色不太了解的可以参考<a href="http://blog.csdn.net/bigbigtreewhu/article/details/24599617" target="_blank" rel="external">基于图像暗通道的去雾算法</a>。</p>
+<h2 id="算法步骤">算法步骤</h2><p>该算法基于雾图像成像模型：  <img src="/img/141209/1.jpg" alt="雾图像成像模型"><br>其中，I(X)就是待去雾的图像，J(x)是我们要恢复的无雾的图像，A是环境光， t(x)为透射率。现在的已知I(X)，求目标值J(x)。其中环境光A的计算，参考暗通道去雾算法。定义F(x,y)为图像的雾浓度，对应于模型中的A(1-t(x))。<br><br></p>
+<h3 id="计算F(x,y)">计算F(x,y)</h3><ul>
+<li>计算M(x,y)，M是图像I中每一个像素在颜色空间{R，G，B}中的最小值；</li>
+<li>计算Am(x,y)，Am是对M(x,y)进行中值平滑滤波后的结果，平滑的同时保留M的边缘信息，Am(x,y)=median(M(x,y))；</li>
+<li>计算B(x,y)，B(x,y)=Am(x,y)-median(|Am(x,y)-M(x,y)|)。考虑到有较好对比度的纹理区域可能没有雾，这部分区域就不需要做去雾处理，因此用Am(x,y)减去M(x,y)的局部标准差；通过对|Am(x,y)-M(x,y)|执行中值滤波来估计M(x,y)的局部标准差，这样可以保证标准差估计的鲁棒性，比如在深度大致相当的区域中突然出现一个小的前景目标的情况下，使用这种方法估计雾浓度可以避免在小目标周围保留一定量的雾。</li>
+<li>计算F(x,y)=max(min(p*B(x,y),M(x,y)),0)，p是控制去雾能力的参数，介于0~1之间，值越大去雾能力越强。</li>
+</ul>
+<h3 id="去除薄雾">去除薄雾</h3><p>根据公式：<img src="/img/141209/3.jpg" alt="照片">获得去雾后的图像。</p>
+<h2 id="实验结果">实验结果</h2><p>　　算法的结果比较中庸，由于使用矩形窗口的中值滤波，结果图像的边缘处有一些圆弧。对于普通照片来说，去雾的结果比暗通道原理要好一些；对于影像来说，去雾的结果一般，对于建筑物以及非云区的影像处理效果较差。下面展示实验数据、雾浓度图像、中值滤波去雾后图像。<br><img src="/img/141209/2.jpg" alt="照片"><br><img src="http://blogimgs-bigbigtree.qiniudn.com/median08data2.jpg" alt="GF影像数据1"><img src="http://blogimgs-bigbigtree.qiniudn.com/medianF.jpg" alt="GF影像雾检测"><img src="http://blogimgs-bigbigtree.qiniudn.com/median08.jpg" alt="GF影像去雾结果"></p>
+<h2 id="Matlab代码">Matlab代码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function ST = medianFilter(IM,p,MedianRadius,outpath)&#10;%IM&#20026;&#26377;&#38654;&#22270;&#20687;&#65292;p&#34920;&#31034;&#21435;&#38654;&#31243;&#24230;0~1&#20043;&#38388;&#65292;MedianRadius&#26159;&#20013;&#20540;&#28388;&#27874;&#31383;&#21475;&#22823;&#23567;&#65292;outpath&#26159;&#36755;&#20986;&#25991;&#20214;&#36335;&#24452;&#10;[h, w, c] = size(IM);&#10;%&#35745;&#31639;M(x,y)&#10;min_channel=min(IM,[],3);&#10;LOW_HIGH = stretchlim(min_channel,0.01);&#10;%&#27714;&#29615;&#22659;&#20809; &#22312;&#26263;&#36890;&#36947;&#26368;&#39640;&#10;for i=1:c&#10;    im = IM(:,:,i);&#10;    Ac(i) = max(im(min_channel &#62;= LOW_HIGH(2)));&#10;end&#10;%&#20013;&#20540;&#28388;&#27874;&#10;medianA = medfilt2(min_channel,[MedianRadius,MedianRadius]);&#10;medianB = medianA - medfilt2(abs(medianA-min_channel),[MedianRadius,MedianRadius]);&#10;min(medianB(:))&#10;medianF = max(min(p.*medianB,min_channel),0);&#10;imwrite(uint8(medianF),[outpath,&#39;medianF.jpg&#39;],&#39;jpg&#39;);&#10;figure,imshow(uint8(medianF));&#10;ST=IM;&#10;for i=1:c&#10;    tmp = (1-medianF/Ac(i));&#10;    ST(:,:,i)=(IM(:,:,i)-medianF)./tmp;&#10;end</span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/haze-removal/">haze removal</a><a href="/tags/median-filter/">median filter</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/image-processing/">image processing</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://liuzeshu.com/2014/12/09/median-filter-haze-removal/" data-title="基于中值滤波的图像去雾算法 | bigbigtree" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/12/10/get-least-k-nums/" title="最小的k个数">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  最小的k个数</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/12/08/maxSubSum/"  title="求子数组之和的最大值——编程之美 2.14 扩展问题 正确实现">
+ <strong>NEXT:</strong><br/> 
+ <span>求子数组之和的最大值——编程之美 2.14 扩展问题 正确实现
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/12/09/median-filter-haze-removal/" data-title="基于中值滤波的图像去雾算法"" data-url="http://liuzeshu.com/2014/12/09/median-filter-haze-removal/""></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"bigbigtree"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+</div>  
+      
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#算法原理"><span class="toc-number">1.</span> <span class="toc-text">算法原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法步骤"><span class="toc-number">2.</span> <span class="toc-text">算法步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#计算F(x,y)"><span class="toc-number">2.1.</span> <span class="toc-text">计算F(x,y)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#去除薄雾"><span class="toc-number">2.2.</span> <span class="toc-text">去除薄雾</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实验结果"><span class="toc-number">3.</span> <span class="toc-text">实验结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Matlab代码"><span class="toc-number">4.</span> <span class="toc-text">Matlab代码</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<section class="author-info">
+		
+			<p> Never Too Late</p>
+		
+		
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2191697875" target="_blank" title="weibo"></a>
+		
+		
+		
+		<a href="https://github.com/bigbigtree" target="_blank" title="github"></a>
+		
+		
+	</div>
+</div>
+<aside class="clearfix">
+
+
+  <section>  
+<h1>Visitor</h1>  
+<div>  
+    <p></p>  
+    <center>  
+   <a href="http://info.flagcounter.com/6JsW"><img src="http://s11.flagcounter.com/count/6JsW/bg_FFFFFF/txt_000000/border_CCCCCC/columns_2/maxflags_8/viewers_0/labels_1/pageviews_1/flags_0/" alt="Flag Counter" border="0"></a>
+    </center>  
+</div>  
+</section>  
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分類</p>
+		<ul>
+		
+			<li><a href="/categories/algorithm/" title="algorithm">algorithm<sup>5</sup></a></li>
+		
+			<li><a href="/categories/c/" title="c++">c++<sup>1</sup></a></li>
+		
+			<li><a href="/categories/data-structure/" title="data structure">data structure<sup>1</sup></a></li>
+		
+			<li><a href="/categories/image-processing/" title="image processing">image processing<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">歸檔</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a><span class="archive-list-count">6</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/binary-search/" title="binary_search">binary_search<sup>1</sup></a></li>
+		
+			<li><a href="/tags/boost/" title="boost">boost<sup>1</sup></a></li>
+		
+			<li><a href="/tags/haze-removal/" title="haze removal">haze removal<sup>1</sup></a></li>
+		
+			<li><a href="/tags/median-filter/" title="median filter">median filter<sup>1</sup></a></li>
+		
+			<li><a href="/tags/剑指offer/" title="剑指offer">剑指offer<sup>2</sup></a></li>
+		
+			<li><a href="/tags/编程之美/" title="编程之美">编程之美<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  //back to top
+  function backToTop(){
+    var buttonHTML = $("<a href=\"#top\" id=\"back-top\">" + "<span>Back to Top</span></a>");
+    buttonHTML.appendTo($("body"));
+    var buttonToTop = $("#back-top");
+    // hide #back-top first
+    buttonToTop.hide();
+
+    // fade in #back-top
+    $(function() {
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                buttonToTop.fadeIn();
+            } else {
+                buttonToTop.fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        buttonToTop.click(function() {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+    });
+  }
+  backToTop();
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      ta = $('#toc.toc-aside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+
+  var show = true;
+  c.click(function(){
+    if(show == true){
+        a.addClass('fadeOut').css('display', 'none');
+        ta.css('display', 'block').addClass('fadeIn');
+        m.addClass('moveMain');  
+    }else{
+        a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');     
+        ta.css('display', 'none'); 
+        m.removeClass('moveMain');
+        $('#toc.toc-aside').css('display', 'none');
+    }
+    show = !show;
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,240-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"bigbigtree"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>
