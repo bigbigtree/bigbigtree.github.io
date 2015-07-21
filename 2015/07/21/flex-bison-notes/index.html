@@ -4,13 +4,16 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>求子数组之和的最大值——编程之美 2.14 扩展问题 正确实现 | bigbigtree</title>
+    <title>flex与bison笔记 | bigbigtree</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Liu Zeshu">
     
-    <meta name="description" content="题目描述输入一个整形数组，数组里有正数也有负数。数组中连续的一个或多个整数组成一个子数组，每个子数组都有一个和。 求所有子数组的和的最大值，要求时间复杂度为O(n)。
-分析与解法使用动态规划求最大子数字和：s[i]表示data[i~n-1]以元素i开始的最大子数组和，a[i]表示data[i~n-1">
+    <meta name="description" content="以下为《flex与bison》的读书笔记
+前言
+flex选择更长的匹配，如果两个模式都匹配，选择首先出现的模式；
+文法与语法分析：构建语法分析树，找出输入记号之间的关系；
+上下文无关语法，bison中token一般使用大写字母。bison包含三部分构成：声明部分+ 规则部分和C代码部分。使用分号代表">
     
     
     
@@ -73,15 +76,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/12/08/maxSubSum/" title="求子数组之和的最大值——编程之美 2.14 扩展问题 正确实现" itemprop="url">求子数组之和的最大值——编程之美 2.14 扩展问题 正确实现</a>
+      <a href="/2015/07/21/flex-bison-notes/" title="flex与bison笔记" itemprop="url">flex与bison笔记</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://liuzeshu.com" title="Liu Zeshu">Liu Zeshu</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-12-08T08:44:57.000Z" itemprop="datePublished">Dec 8 2014</time>
-    Updated:<time datetime="2014-12-08T08:50:08.070Z" itemprop="dateModified">Dec 8 2014</time>
+    <time datetime="2015-07-21T10:40:54.000Z" itemprop="datePublished">Jul 21 2015</time>
+    Updated:<time datetime="2015-07-21T10:40:56.802Z" itemprop="dateModified">Jul 21 2015</time>
     
   </p>
 </header>
@@ -90,32 +93,140 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#题目描述"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分析与解法"><span class="toc-number">2.</span> <span class="toc-text">分析与解法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#扩展问题"><span class="toc-number">3.</span> <span class="toc-text">扩展问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#代码实现"><span class="toc-number">4.</span> <span class="toc-text">代码实现</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用FLEX"><span class="toc-number">2.</span> <span class="toc-text">使用FLEX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bison"><span class="toc-number">3.</span> <span class="toc-text">使用bison</span></a></li></ol>
 		</div>
 		
-		<h1 id="题目描述">题目描述</h1><p>输入一个整形数组，数组里有正数也有负数。数组中连续的一个或多个整数组成一个子数组，每个子数组都有一个和。 求所有子数组的和的最大值，要求时间复杂度为O(n)。<br><br></p>
-<h1 id="分析与解法">分析与解法</h1><p>使用动态规划求最大子数字和：<br>s[i]表示data[i~n-1]以元素i开始的最大子数组和，a[i]表示data[i~n-1]中的最大子数组和 ；<br>s[i]=max(s[i+1]+data[i], data[i]);<br>a[i]=max(a[i+1], s[i]);<br>由于数组s,a递推的时候，都只用到数组的前一个变量，所以可以用滚动数组节省空间。<br><br></p>
-<h1 id="扩展问题">扩展问题</h1><p>1) 如果数组首尾相连，即允许找到一组数字(A[i],···,A[n-1], A[0],···, A[j])，请使其和最大，怎么办？（书中答案错误，可以使用旋转数组的方法，时间复杂度n2，本文参考别人的想法，实现的算法复杂度为n）<br>2) 如果题目要求返回最大子数组的位置，算法应该如何改变？还能保持O(N)的复杂度么？<br><br></p>
-<h1 id="代码实现">代码实现</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &#60;cstdio&#62;&#10;/*&#10;&#20351;&#29992;&#21160;&#24577;&#35268;&#21010;&#27714;&#26368;&#22823;&#23376;&#25968;&#23383;&#21644;&#65306;&#10;s[i]&#34920;&#31034;data[i~n-1]&#20197;&#20803;&#32032;i&#24320;&#22987;&#30340;&#26368;&#22823;&#23376;&#25968;&#32452;&#21644;&#65292;a[i]&#34920;&#31034;data[i~n-1]&#20013;&#30340;&#26368;&#22823;&#23376;&#25968;&#32452;&#21644; &#65307;&#10;s[i]=max(s[i+1]+data[i], data[i]);&#10;a[i]=max(a[i+1], s[i]); &#10;&#30001;&#20110;&#25968;&#32452;s,a&#36882;&#25512;&#30340;&#26102;&#20505;&#65292;&#37117;&#21482;&#29992;&#21040;&#25968;&#32452;&#30340;&#21069;&#19968;&#20010;&#21464;&#37327;&#65292;&#25152;&#20197;&#21487;&#20197;&#29992;&#28378;&#21160;&#25968;&#32452;&#33410;&#30465;&#31354;&#38388;&#12290; &#10;*/&#10;int maxSum(int data[], int n)&#10;&#123;&#10;    int s = data[n-1];&#10;    int a = data[n-1];&#10;    for(int i = n-2; i&#62;=0; i--)&#10;    &#123;&#10;        if(s&#60;0)&#10;            s=0;&#10;        s+=data[i];&#10;        if(s &#62; a)&#10;            a = s;&#10;    &#125; &#10;    return a;&#10;&#125; &#10;/*&#10;&#22914;&#26524;&#35201;&#27714;&#36820;&#22238;&#26368;&#22823;&#23376;&#25968;&#32452;&#21644;&#30340;&#20301;&#32622;&#65292;&#22914;&#20309;&#22788;&#29702;&#65311;&#10;&#20351;&#29992;curEnd&#35760;&#24405;&#24403;&#21069;&#26368;&#22823;&#23383;&#25968;&#32452;&#21644;&#30340;&#32467;&#26463;&#20301;&#32622;&#65292;&#10;&#24403;s&#65288;&#20197;&#20803;&#32032;i&#24320;&#22987;&#30340;&#26368;&#22823;&#23376;&#25968;&#32452;&#21644;&#65289; &#23567;&#20110;&#38646;&#26102;&#65292;&#26356;&#26032;curEnd&#23383;&#25968;&#32452;&#26411;&#31471;&#26631;&#35760;&#65292;&#10;&#24403;a&#65288;&#24403;&#21069;&#30340;&#26368;&#22823;&#23376;&#25968;&#32452;&#21644;&#65289;&#21457;&#29983;&#21464;&#21270;&#26102;&#65292;&#26356;&#26032;&#26368;&#22823;&#23383;&#25968;&#32452;&#30340;&#26631;&#35760;Start&#65292;End &#10;*/ &#10;int maxSum2(int data[], int n,int &#38;start, int &#38;end)&#10;&#123;&#10;    int s = data[n-1];&#10;    int a = data[n-1];&#10;    int curEnd = n-1;&#10;    &#10;    start = end = n-1;&#10;    for(int i = n-2; i&#62;=0; i--)&#10;    &#123;&#10;        if(s&#60;0)&#10;        &#123;&#10;            s=0;&#10;            curEnd = i;&#10;        &#125;        &#10;        s+=data[i];&#10;        if(s &#62; a)&#10;        &#123;&#10;            a = s;&#10;            start = i;&#10;            end = curEnd;&#10;        &#125;&#10;            &#10;    &#125; &#10;    return a;&#10;&#125; &#10;/*&#10;&#22914;&#26524;&#25968;&#32452;arr[0],&#8230;,arr[n-1]&#39318;&#23614;&#30456;&#37051;&#65292;&#20063;&#23601;&#26159;&#20801;&#35768;&#25214;&#21040;&#19968;&#27573;&#25968;&#23383;arr[i],&#8230;,arr[n-1],arr[0],&#8230;,a[j]&#65292;&#20351;&#20854;&#21644;&#26368;&#22823;&#65292;&#35813;&#22914;&#20309;&#65311;&#10;&#32534;&#31243;&#20043;&#32654;&#30340;&#31572;&#26696;&#30340;&#24605;&#36335;&#26377;&#38382;&#39064;&#65292;&#35814;&#35265;&#65306; http://www.ahathinking.com/archives/120.html&#10;&#21442;&#32771;&#35813;&#25991;&#31639;&#27861;&#65292;&#21487;&#30693;&#22312;&#20801;&#35768;&#25968;&#32452;&#36328;&#30028;&#65288;&#39318;&#23614;&#30456;&#37051;&#65289;&#26102;&#65292;&#26368;&#22823;&#23376;&#25968;&#32452;&#30340;&#21644;&#20026;&#19979;&#38754;&#30340;&#26368;&#22823;&#20540;&#10;Maxsum=&#123; &#21407;&#38382;&#39064;&#30340;&#26368;&#22823;&#23376;&#25968;&#32452;&#21644;&#65307;&#25968;&#32452;&#25152;&#26377;&#20803;&#32032;&#24635;&#20540;-&#26368;&#23567;&#23376;&#25968;&#32452;&#21644; &#125;&#10;*/ &#10;int maxSum3(int data[], int n)&#10;&#123;&#10;    int maxs = data[n-1];&#10;    int maxa = data[n-1];&#10;    int sumAll = data[n-1];&#10;    &#10;    int mins = data[n-1];&#10;    int mina = data[n-1];&#10;    &#10;    for(int i = n-2; i&#62;=0; i--)&#10;    &#123;&#10;        sumAll+=data[i];&#10;        if(maxs&#60;0)&#10;            maxs=0;&#10;        maxs+=data[i];&#10;        if(maxs &#62; maxa)&#10;            maxa = maxs;&#10;        &#10;        if(mins&#62;0)&#10;            mins=0;&#10;        mins+=data[i];&#10;        if(mins &#60; mina)&#10;            mina = mins;&#10;    &#125; &#10;    int maxa2 = sumAll-mina;&#10;    return maxa&#62;maxa2?maxa:maxa2;&#10;&#125; &#10;int main()&#10;&#123;&#10;    /*&#10;    int d[]=&#123;&#10;        -4,-5,-6,-1,-5,-9&#10;    &#125;;*/&#10;    int d[]=&#123;&#10;        8,-10,60,3,-1,-6&#10;    &#125;;&#10;    int s,e;&#10;    int res = maxSum3(d,6);&#10;    printf(&#34;%d\n&#34;,res);&#10;&#125;</span><br></pre></td></tr></table></figure>  
+		<p><strong>以下为《flex与bison》的读书笔记</strong></p>
+<h2 id="前言">前言</h2><ul>
+<li>flex选择更长的匹配，如果两个模式都匹配，选择首先出现的模式；</li>
+<li>文法与语法分析：构建语法分析树，找出输入记号之间的关系；</li>
+<li>上下文无关语法，bison中token一般使用大写字母。bison包含三部分构成：声明部分+ 规则部分和C代码部分。使用分号代表规则的结束；</li>
+<li>语法分析器返回记号时，记号值总被存储在yyval中</li>
+<li>当规则缺少显示动作时，语法分析器将$1赋值给$$</li>
+<li>bison不分析二义性语法，例如加减法的先后顺序，这里有点绕；后面可以事先设定优先级和分组，解决二义性</li>
+</ul>
+<p><strong>几个概念</strong></p>
+<ul>
+<li>语法起始符号：第一条规则左边的语法符号，整个输入必须被他匹配</li>
+<li>目标符号：冒号左边的语法符号，用$$代替，右侧语法符号的语义值依次为$1 $2…</li>
+<li>记号：token，用%token声明</li>
+<li>动作代码：在每条规则之后，用花括号括起</li>
+</ul>
+<h2 id="使用FLEX">使用FLEX</h2><p><strong>正则表达式</strong></p>
+<ul>
+<li>.                匹配除换行符以外任意单一字符</li>
+<li>[]            字符类，匹配方括号内任意一个字符，若起始为^，反向匹配</li>
+<li>[a-z]{-}[jv]    匹配前一个字符类减去后一个字符类的结果</li>
+<li>*            匹配零个或多个紧接在前面的表达式</li>
+<li>+            匹配一个或多个…</li>
+<li>？            匹配零个或一个…</li>
+<li>“…”            引号内字符被基于字面意义被解释</li>
+<li>()            一系列的正则表达式组成新的正则表达式</li>
+<li>[ \t]*        匹配空字符串</li>
+<li>/                尾部上下文，匹配斜线前的表达式，并对其后的表达式进行要求，但并不消耗掉其后字符</li>
+<li>{}            当花括号中有一个或两个数字时，表示前一个模式可以匹配的最小最大次数；当里面带有名字时，指向以这个名字命名的模式</li>
+</ul>
+<p><strong>处理二义性</strong></p>
+<ul>
+<li>重复匹配的操作符总是针对邻近的表达式</li>
+<li>负号的用法，当匹配正负号时[-+]?放在前面，避免被误认为范围</li>
+<li>flex允许两个不同模式匹配相同的输入，dangerous</li>
+<li>复杂的匹配模式并不会降低其速度，除了尾部上下文符号</li>
+<li>匹配关键字的模式先于匹配标识符的模式，就能正确匹配关键字</li>
+<li>上下文相关的词法分析，例如pascal</li>
+</ul>
+<p><strong>输入</strong></p>
+<ul>
+<li>-lfl    flex提供的库，定义了main例程和yywarp</li>
+<li>yywrap:当lex词法分析器到达yyin的结束位置时，它有另一个文件时，调整yyin的值且返回0，重新开始词法分析，%option noyywarp可以关闭默认yywarp</li>
+<li>通过判断输入是否是终端，选择性开启预读机制</li>
+</ul>
+<p><strong>三种层次管理输入：</strong></p>
+<ul>
+<li>设置yyin</li>
+<li>创建并使用YY_BUFFER_STATE数据结构处理输入</li>
+<li><p>重新定义读取输入到缓冲区的宏YY_INPUT，对于某些输入无法预先载入字符串</p>
+<p>  YY_BUFFER_STATE bp;<br>  bp = yy_create_buffer(yyin,YY_BUF_SIZE);//YY_BUF_SIZE由flex定义，通常是16k<br>  yy_switch_to_buffer(bp);</p>
+</li>
+</ul>
+<p><strong>输出</strong>：flex有默认的输出规则，使用%option nodefault禁用默认规则</p>
+<p><strong>起始状态和嵌套输入文件</strong></p>
+<ul>
+<li>起始状态指定在特定时刻哪些模式可以用来匹配，尖括号括起的起始状态之后的模式为其指定的模式</li>
+<li>%x指定独占的起始状态，当该状态被激活时，只有它的模式可以进行匹配；<br>%s声明包含的起始状态，允许未被标记的模式匹配</li>
+<li>宏BEGIN用来切换到另一个起始状态</li>
+<li>切换缓冲区的步骤：保存当前缓冲区，然后yy_switch_buffer切换缓冲区，设置状态INITIATE后，使用正常模式进行匹配</li>
+</ul>
+<p><strong>使用符号表</strong></p>
+<ul>
+<li>线性探测哈希函数查找对应符号条目</li>
+<li>flex和bison中难以跟踪字符串存储管理，yytext每次都会被新的词法符号所替换</li>
+</ul>
+<p><strong>内置变量</strong></p>
+<ul>
+<li>yyin:     输入缓冲流的文件指针，可以被替换以实现解析某个自定义的文件</li>
+<li>yyleng:    当前匹配字串的长度</li>
+<li>yylex:     调用词法分析器进行分析</li>
+<li>yylineno:    保存当前行号</li>
+<li>yyout:       输出流的指针</li>
+<li>yyrestart(fp):重启解析文件fp，但会丢失已经读入缓冲区的输入</li>
+<li>yytext：     当前匹配的字串</li>
+<li>yyterminate:    结束词法分析器，返回YY_NULL即0，bison把它作为输入的结束</li>
+<li>yywrap：     解析一个文件完毕之后，会调用yywrap:返回1表示结束，0表示继续扫描</li>
+<li>YY_INPUT:    当输入缓冲区为空时，调用此接口<br>**Flex状态</li>
+<li>INITIAL：    默认起始状态</li>
+<li>BEGIN：    切换到指定的初始状态</li>
+</ul>
+<p><strong>字符常量</strong><br>\’([^”\]\[‘“?\abfnrtv]|\[0-7]{1,3}|\[Xx][0-9a-fA-F]+|{UCN})+\’</p>
+<p><strong>QA</strong><br>P47使用input先读完行剩余内容，从包含文件处理完后继续处理？    已解决<br>切换到INITIAL状态后，在当前缓冲区继续执行，直到匹配到EOF，进行相应动作</p>
+<p>线性探测哈希函数的原理：*9^char</p>
+<p>P60没有匹配文件名前后的标点符号？</p>
+<p>第二章，练习1答案：使用^.*匹配会忽略include语句。</p>
+<p><strong>tips</strong><br>linux命令成功返回0，否则非零</p>
+<h2 id="使用bison">使用bison</h2><ul>
+<li>LHS：规则的左部，语法符号都是非终结符</li>
+<li>LRS：规则的右部</li>
+<li>终结符：在输入中出现并被词法分析器返回的符号</li>
+<li>语法由一系列规则组成，语法的起始符号作为语法分析树的根存在</li>
+</ul>
+<p><strong>移进</strong>：当语法分析器读到的记号无法结束一条规则时，将该记号压入内部堆栈；</p>
+<p><strong>归约</strong>：当压入堆栈的语法符号已经可以组成规则的右部时，弹出所有右部符号，把对应的左部符号入栈；归约后会执行规则关联的代码</p>
+<p><strong>LALR(1)无法分析的语法</strong><br>LALR：自左向右向前查看一个记号，它不能处理有歧义的语法，例如相同输入可以匹配多棵语法树的情况，也不能处理需要向前查看多个记号的语法</p>
+<p><strong>bison语法分析器</strong><br>bison规范由三部分构成：定义部分；语法分析器的规则；C代码</p>
+<p><strong>抽象语法树</strong></p>
+<ul>
+<li>可编写递归子程序遍历抽象语法树，分析树中不包含不需要关注的规则节点</li>
+<li>使用%union声明符号值类型，使用&lt;&gt;自定义符号类型；记号及非终结符不需要为其声明类型</li>
+<li>P59calclist规则动作中，printf的设置影响输出结果的精度</li>
+</ul>
+<p><strong>移进/归约冲突和操作符优先级</strong></p>
+<ul>
+<li>可以再语法规则外单独描述优先级，%left %right %noassoc的出现顺序决定了由低到高的优先级</li>
+<li>%left表示左结合、%right右结合、%noassoc表示没有结合性</li>
+<li>UMINUS单目负号操作的伪标记</li>
+<li>%prec UMINUS将较低优先级的单目负号拥有比乘法更高的优先级</li>
+<li><strong>不要滥用优先级规则</strong>，除了表达式语法或者解决if/then/else语言结构的”dangling else”冲突；<strong>尽量修正语法解决冲突</strong></li>
+</ul>
+  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/编程之美/">编程之美</a>
+  <span></span> <a href="/tags/bison/">bison</a><a href="/tags/flex/">flex</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/algorithm/">algorithm</a>
+  <a class="article-category-link" href="/categories/编译原理/">编译原理</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://liuzeshu.com/2014/12/08/maxSubSum/" data-title="求子数组之和的最大值——编程之美 2.14 扩展问题 正确实现 | bigbigtree" data-tsina="null" class="share clearfix">
+  <div data-url="http://liuzeshu.com/2015/07/21/flex-bison-notes/" data-title="flex与bison笔记 | bigbigtree" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -124,19 +235,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/12/09/median-filter-haze-removal/" title="基于中值滤波的图像去雾算法">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  基于中值滤波的图像去雾算法</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2014/12/08/more-than-half-num/"  title="数组中出现次数超过一半的数字">
+<a href="/2015/03/13/boost-threads-vs2010-md/"  title="VS2010 编译 boost thread库">
  <strong>NEXT:</strong><br/> 
- <span>数组中出现次数超过一半的数字
+ <span>VS2010 编译 boost thread库
 </span>
 </a>
 </div>
@@ -146,7 +249,7 @@
 	
 
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2014/12/08/maxSubSum/" data-title="求子数组之和的最大值——编程之美 2.14 扩展问题 正确实现"" data-url="http://liuzeshu.com/2014/12/08/maxSubSum/""></div>
+	<div class="ds-thread" data-thread-key="2015/07/21/flex-bison-notes/" data-title="flex与bison笔记"" data-url="http://liuzeshu.com/2015/07/21/flex-bison-notes/""></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
@@ -166,7 +269,7 @@ var duoshuoQuery = {short_name:"bigbigtree"};
       
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#题目描述"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分析与解法"><span class="toc-number">2.</span> <span class="toc-text">分析与解法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#扩展问题"><span class="toc-number">3.</span> <span class="toc-text">扩展问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#代码实现"><span class="toc-number">4.</span> <span class="toc-text">代码实现</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用FLEX"><span class="toc-number">2.</span> <span class="toc-text">使用FLEX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bison"><span class="toc-number">3.</span> <span class="toc-text">使用bison</span></a></li></ol>
   </div>
 
 <div id="asidepart">
