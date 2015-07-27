@@ -4,16 +4,17 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>flex与bison笔记 | bigbigtree</title>
+    <title>flex bison 笔记 | bigbigtree</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Liu Zeshu">
     
-    <meta name="description" content="以下为《flex与bison》的读书笔记
-前言
+    <meta name="description" content="前言
+
 flex选择更长的匹配，如果两个模式都匹配，选择首先出现的模式；
 文法与语法分析：构建语法分析树，找出输入记号之间的关系；
-上下文无关语法，bison中token一般使用大写字母。bison包含三部分构成：声明部分+ 规则部分和C代码部分。使用分号代表">
+上下文无关语法，bison中token一般使用大写字母。bison包含三部分构成：声明部分+ 规则部分和C代码部分。使用分号代表规则的结束；
+语法分析器返回记号时，记号">
     
     
     
@@ -76,7 +77,7 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/07/21/flex-bison-notes/" title="flex与bison笔记" itemprop="url">flex与bison笔记</a>
+      <a href="/2015/07/21/flex-bison-notes-md/" title="flex bison 笔记" itemprop="url">flex bison 笔记</a>
   </h1>
   <p class="article-author">By
     
@@ -84,7 +85,7 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
     </p>
   <p class="article-time">
     <time datetime="2015-07-21T10:40:54.000Z" itemprop="datePublished">Jul 21 2015</time>
-    更新日期:<time datetime="2015-07-21T10:53:37.919Z" itemprop="dateModified">Jul 21 2015</time>
+    更新日期:<time datetime="2015-07-27T01:07:12.431Z" itemprop="dateModified">Jul 27 2015</time>
     
   </p>
 </header>
@@ -93,11 +94,11 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目錄</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用FLEX"><span class="toc-number">2.</span> <span class="toc-text">使用FLEX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bison"><span class="toc-number">3.</span> <span class="toc-text">使用bison</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用FLEX"><span class="toc-number">2.</span> <span class="toc-text">使用FLEX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bison"><span class="toc-number">3.</span> <span class="toc-text">使用bison</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析SQL"><span class="toc-number">4.</span> <span class="toc-text">分析SQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flex规范参考"><span class="toc-number">5.</span> <span class="toc-text">flex规范参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bison规范参考"><span class="toc-number">6.</span> <span class="toc-text">Bison规范参考</span></a></li></ol>
 		</div>
 		
-		<p><strong>以下为《flex与bison》的读书笔记</strong></p>
-<h2 id="前言">前言</h2><ul>
+		<h2 id="前言">前言</h2><hr>
+<ul>
 <li>flex选择更长的匹配，如果两个模式都匹配，选择首先出现的模式；</li>
 <li>文法与语法分析：构建语法分析树，找出输入记号之间的关系；</li>
 <li>上下文无关语法，bison中token一般使用大写字母。bison包含三部分构成：声明部分+ 规则部分和C代码部分。使用分号代表规则的结束；</li>
@@ -123,12 +124,15 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 <li>“…”            引号内字符被基于字面意义被解释</li>
 <li>()            一系列的正则表达式组成新的正则表达式</li>
 <li>[ \t]*        匹配空字符串</li>
+<li>|                匹配前面的正则表达式或者后面的，作用范围左边所有或右边所有</li>
 <li>/                尾部上下文，匹配斜线前的表达式，并对其后的表达式进行要求，但并不消耗掉其后字符</li>
 <li>{}            当花括号中有一个或两个数字时，表示前一个模式可以匹配的最小最大次数；当里面带有名字时，指向以这个名字命名的模式</li>
-</ul>
-<p><strong>处理二义性</strong></p>
-<ul>
-<li>重复匹配的操作符总是针对邻近的表达式</li>
+<li>(?a:pattern)或者(?a-x:pattern)：Perl风格的模式修饰符。前者用修饰符a修饰模式，后者使用修饰符a但不包含修饰符x来修饰模式。</li>
+<li>修饰符包含i s x;i标示大小写无关；s将所有字符作为单行匹配，即.可以匹配\n；x忽略空白字符和C风格注释</li>
+<li><p>支持POSIX字符类，[:alnum:] [:alpha:]等<br><strong>详见P138</strong><br><strong>处理二义性</strong></p>
+</li>
+<li><p>重复匹配的操作符总是针对邻近的表达式</p>
+</li>
 <li>负号的用法，当匹配正负号时[-+]?放在前面，避免被误认为范围</li>
 <li>flex允许两个不同模式匹配相同的输入，dangerous</li>
 <li>复杂的匹配模式并不会降低其速度，除了尾部上下文符号</li>
@@ -180,13 +184,14 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 <li>INITIAL：    默认起始状态</li>
 <li>BEGIN：    切换到指定的初始状态</li>
 </ul>
-<p><strong>字符常量</strong><br>\’([^”\]\[‘“?\abfnrtv]|\[0-7]{1,3}|\[Xx][0-9a-fA-F]+|{UCN})+\’</p>
+<p><strong>字符常量</strong><br><strong>\’([^”\]\[‘“?\abfnrtv]|\[0-7]{1,3}|\[Xx][0-9a-fA-F]+|{UCN})+\’</strong><br><strong>数字——</strong><br>**[+-]?[0-9]+</p>
 <p><strong>QA</strong><br>P47使用input先读完行剩余内容，从包含文件处理完后继续处理？    已解决<br>切换到INITIAL状态后，在当前缓冲区继续执行，直到匹配到EOF，进行相应动作</p>
 <p>线性探测哈希函数的原理：*9^char</p>
 <p>P60没有匹配文件名前后的标点符号？</p>
 <p>第二章，练习1答案：使用^.*匹配会忽略include语句。</p>
 <p><strong>tips</strong><br>linux命令成功返回0，否则非零</p>
-<h2 id="使用bison">使用bison</h2><ul>
+<h2 id="使用bison">使用bison</h2><hr>
+<ul>
 <li>LHS：规则的左部，语法符号都是非终结符</li>
 <li>LRS：规则的右部</li>
 <li>终结符：在输入中出现并被词法分析器返回的符号</li>
@@ -199,7 +204,7 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 <p><strong>抽象语法树</strong></p>
 <ul>
 <li>可编写递归子程序遍历抽象语法树，分析树中不包含不需要关注的规则节点</li>
-<li>使用%union声明符号值类型，使用&lt;&gt;自定义符号类型；记号及非终结符不需要为其声明类型</li>
+<li>使用%union声明符号值类型(yylval)，并使用&lt;&gt;定义符号的类型；记号及非终结符不需要为其声明类型</li>
 <li>P59calclist规则动作中，printf的设置影响输出结果的精度</li>
 </ul>
 <p><strong>移进/归约冲突和操作符优先级</strong></p>
@@ -209,6 +214,91 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 <li>UMINUS单目负号操作的伪标记</li>
 <li>%prec UMINUS将较低优先级的单目负号拥有比乘法更高的优先级</li>
 <li><strong>不要滥用优先级规则</strong>，除了表达式语法或者解决if/then/else语言结构的”dangling else”冲突；<strong>尽量修正语法解决冲突</strong></li>
+</ul>
+<p>P67笔误：sym域（应为syms）域指向任意多个虚拟参数</p>
+<ul>
+<li>%start声明了顶层规则，不需要将规则放到语法分析器的开始部分</li>
+<li>右递归更容易构建从头到尾的语句链表；缺点是将所有语句放到语法分析器的堆栈中，有堆栈溢出的风险</li>
+<li>单引号引起的字符可以作为记号；可以用文字字符记号表示操作符</li>
+</ul>
+<p><strong>简单的语法分析器错误恢复</strong>：伪记号error确定了错误恢复点，通常在第一个错误后，抑制后续的分析错误消息，直到成功在一行内移进三个记号</p>
+<p><strong>一个高级计算器</strong></p>
+<ul>
+<li>使用单一记号表达多个语义相近的操作符可以帮助缩短语法长度</li>
+<li>EOL匹配续行，一个斜线和一个换行符</li>
+<li>核心例程eval计算抽象语法树。采用类似深度优先的树遍历算法计算表达式的值</li>
+<li>预读终结符存储在yychar，而其语义和位置存储在yyval和yylloc中</li>
+</ul>
+<h2 id="分析SQL">分析SQL</h2><hr>
+<p><strong>逆波兰式</strong>：便于语法分析树的建立。<br><strong>初始状态的使用</strong>：使用状态BTWEEN控制AND语义是逻辑与还是BETWEEN…AND</p>
+<h2 id="flex规范参考">flex规范参考</h2><hr>
+<p><strong>结构规范</strong>程序由三部分构成：定义部分、规则部分、用户子例程。</p>
+<pre><code><span class="attribute">...</span>定义部分<span class="attribute">...</span>
+<span class="subst">%%</span>
+<span class="attribute">...</span>规则部分<span class="attribute">...</span>
+<span class="subst">%%</span>
+<span class="attribute">...</span>用户子例程<span class="attribute">...</span>
+</code></pre><p><strong>定义部分</strong>：包含选项、文字块、定义、开始条件和转换，空白符开始的行被原样拷贝到C文件中；</p>
+<p><strong>规则部分</strong></p>
+<ul>
+<li>包含模式行和C代码，以空白字符开始的或在%{和%}之间的认为是C代码，会被直接拷贝到yylex()中</li>
+<li>规则部分开头出现的C代码也会出现在yylex的开头，一般是变量声明；其他部分的C代码一般是注释，因为你无法确定其在词法分析器的位置</li>
+<li>模式行的C代码，若是超过一条语句，必须用括号括起</li>
+<li>若输入字符无法匹配任何模式，默认匹配ECHO模式，记号的拷贝被输出</li>
+</ul>
+<p><strong>用户子例程</strong>：子例程的C代码会被原样拷贝到C文件，大型程序中，支撑代码放在另一个单独的源文件中比较方便，减少lex文件修改后重新编译的内容<br><strong>BEGIN</strong>宏切换起始状态，该状态值为0，也被称为INITIAL，其他状态需要用%s（包含）或%x（独占）命名<br><strong>上下文相关性</strong><br><strong>左上下文相关</strong>的实现方法：特殊的行首模式字符、起始状态和显式代码。</p>
+<ul>
+<li>^可以只在行首匹配模式</li>
+<li><p>起始状态可以要求某个token必须出现在另一个token之前，下面的second必定出现在first之后</p>
+<p>  %s MYSTATE<br>  %%<br>  first {BEGIN MYSTATE;}<br>  …<br>  <mystate>second {BEGIN 0;}</mystate></p>
+</li>
+<li>使用标志伪造左上下文相关性，详见P125</li>
+</ul>
+<p><strong>右上下文相关</strong>的实现方法：特殊的行尾模式字符、斜线、yyless（）</p>
+<ul>
+<li>$匹配行尾模式，即下一个字符是\n</li>
+<li>模式中/字符可以包含显式尾部上下文，例如abc/de，仅匹配紧跟着de的abc字符，但de不会出现在yytext中，也不会被yyleng计算</li>
+<li>yyless可以推回刚读到的记号，需要标明需要保留的字符个数，例如abcde {yyless(3);}与使用/作用一致</li>
+</ul>
+<p><strong>定义</strong>对全部或部分正则表达式进行命名，并通过名字引用他们{NAME}<br><strong>ECHO</strong>对于未匹配的记号，输出到yyout中，相当于<code>frpintf(yyout,&quot;%s&quot;,yytext)</code>，可以通过<code>%option nodefault</code>取消这个默认动作：<br><strong>输入缓冲区</strong>：</p>
+<ul>
+<li>YY_BUFFER_STATE:词法分析器读取输入的结构，通过yy_create_buffer创建</li>
+<li>yy_switch_to_buffer:切换缓冲区结构</li>
+<li>yy_flush_buffer：放弃缓冲区中的内容，可以在交互式词法分析器中做错误恢复</li>
+<li>yy_delete_buffer：释放缓冲区</li>
+<li>字符串输入“yy_scan_bytes” “yy_scan_string” “yy_scan_buffer”</li>
+<li>input():提供输入字符给词法分析器，flex为了性能跳过该函数，但可以利用它处理动作例程，例如超长注释的处理（flex通常只有15k缓冲区），详见p129</li>
+<li>YY_INPUT宏读取输入到缓冲区，对于非终端非文件的输入，重定义该宏是很有必要的</li>
+<li>isatty()确定输入是否来自终端</li>
+<li>yylineno：可以自动更新行号，但读取多个文件时需要自己初始化行号。通过%option yylineno打开该变量</li>
+<li>yywarp()在词法分析器到达文件末尾时调用，若返回1，则词法分析器返回零记号表明文件结束；若返回0，则继续分析，flex标准版yywarp总返回1。通过调整yyin指向新的文件，然后自定义yywarp可以继续分析。</li>
+<li>避免和c++库冲突，在C++词法分析器中input和output更改为yyinput yyoutput</li>
+<li>yyleng:匹配记号的长度，相当于strlen(yytext)</li>
+<li>yyless()：如果当前匹配的字符串的末尾部分需要重新处理，那么可以调用yyless(n)将这部分子串”退回”给输入串，下次再匹配处理。<strong>注意n是不退回的字符个数</strong>，即退回的字符个数是yyleng-n</li>
+<li>yymore当需下一次被匹配的字符串被添加在当前识别出的字符串后面，即不使下一次的输入替换yytext中已有的内容而是接在它的内容之后，必须在当前的动作中调用yymore()</li>
+<li>YY_USER_ACTION:宏在语法分析器动作的代码前被展开<br><strong>文字块</strong>使用%{和%}括起的C代码，包含变量及函数声明和引入的头文件；若使用%top{则会将代码拷贝到程序的头部附近<br><strong>可重入词法分析器</strong>：也称为纯语法分析器，详见p213<br><strong>REJECT</strong>:对于重叠的记号，可以分析每个出现的记号</li>
+</ul>
+<h2 id="Bison规范参考">Bison规范参考</h2><hr>
+<p><strong>语法结构</strong>由三部分构成：定义部分、规则部分、用户子例程。</p>
+<pre><code><span class="attribute">...</span>定义部分<span class="attribute">...</span>
+<span class="subst">%%</span>
+<span class="attribute">...</span>规则部分<span class="attribute">...</span>
+<span class="subst">%%</span>
+<span class="attribute">...</span>用户子例程<span class="attribute">...</span>
+</code></pre><p><strong>符号</strong>：error标示错误恢复，其他bison没有预先设定。</p>
+<ul>
+<li><strong>终结符（记号）</strong>：词法分析器产生的符号，记号也可以是引号引起的文字字符”+”</li>
+<li><strong>非终结符</strong>：规则左部定义的符号</li>
+<li>嵌入动作：规则中间的动作，被构造一条新的规则。但有时会造成移进归约冲突</li>
+<li>GLR无限制向前查看</li>
+<li>冲突类型有两种：移进/归约和归约/归约</li>
+<li>%expect预计冲突个数，若bison分析的结果不一致则报编译错误</li>
+<li>若LALR分析算法很难处理，则使用LR语法分析</li>
+</ul>
+<p>作业：</p>
+<ul>
+<li>将flex利用yyless yymore分析字符串的模式搞定</li>
+<li>搞定LALR分析与LR分析</li>
 </ul>
   
 	</div>
@@ -229,7 +319,7 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 
 <div class="article-share" id="share">
 
-  <div data-url="http://liuzeshu.com/2015/07/21/flex-bison-notes/" data-title="flex与bison笔记 | bigbigtree" data-tsina="null" class="share clearfix">
+  <div data-url="http://liuzeshu.com/2015/07/21/flex-bison-notes-md/" data-title="flex bison 笔记 | bigbigtree" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -252,7 +342,7 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 	
 
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2015/07/21/flex-bison-notes/" data-title="flex与bison笔记"" data-url="http://liuzeshu.com/2015/07/21/flex-bison-notes/""></div>
+	<div class="ds-thread" data-thread-key="2015/07/21/flex-bison-notes-md/" data-title="flex bison 笔记"" data-url="http://liuzeshu.com/2015/07/21/flex-bison-notes-md/""></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
@@ -272,7 +362,7 @@ var duoshuoQuery = {short_name:"bigbigtree"};
       
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目錄</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用FLEX"><span class="toc-number">2.</span> <span class="toc-text">使用FLEX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bison"><span class="toc-number">3.</span> <span class="toc-text">使用bison</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用FLEX"><span class="toc-number">2.</span> <span class="toc-text">使用FLEX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bison"><span class="toc-number">3.</span> <span class="toc-text">使用bison</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析SQL"><span class="toc-number">4.</span> <span class="toc-text">分析SQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flex规范参考"><span class="toc-number">5.</span> <span class="toc-text">flex规范参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bison规范参考"><span class="toc-number">6.</span> <span class="toc-text">Bison规范参考</span></a></li></ol>
   </div>
 
 <div id="asidepart">
