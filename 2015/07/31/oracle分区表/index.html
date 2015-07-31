@@ -4,15 +4,17 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>最长递增子序列 | bigbigtree</title>
+    <title>oracle分区表 | bigbigtree</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Liu Zeshu">
     
-    <meta name="description" content="题目描述给定一个长度为N的数组，找出一个最长的单调自增子序列（不一定连续，但是顺序不能乱）。
-分析与解法最长递增子序列的解法有很多种，常用的有最长公共子序列法、动态规划、记录所有递增序列长度最大值的方法。
-
-最长公共子序列法：如例子中的数组A{5，6， 7， 1， 2， 8}，则我们排序该数组得到数">
+    <meta name="description" content="oracle分区表
+为何要用分区表：
+增强可用性：如果表的某个分区出现故障，表在其他分区的数据仍然可用；
+维护方便：如果表的某个分区出现故障，需要修复数据，只修复该分区即可+ 
+均衡I/O：可以把不同的分区映射到磁盘以平衡I/O，改善整个系统性能；
+改善查询性能：对分区对象的查询可以仅搜索自己关心的">
     
     
     
@@ -75,15 +77,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/12/10/max-increase-arrays/" title="最长递增子序列" itemprop="url">最长递增子序列</a>
+      <a href="/2015/07/31/oracle分区表/" title="oracle分区表" itemprop="url">oracle分区表</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://liuzeshu.com" title="Liu Zeshu">Liu Zeshu</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-12-10T15:05:43.000Z" itemprop="datePublished">Dec 10 2014</time>
-    更新日期:<time datetime="2014-12-10T15:14:25.039Z" itemprop="dateModified">Dec 10 2014</time>
+    <time datetime="2015-07-31T05:25:11.000Z" itemprop="datePublished">Jul 31 2015</time>
+    更新日期:<time datetime="2015-07-31T05:27:25.635Z" itemprop="dateModified">Jul 31 2015</time>
     
   </p>
 </header>
@@ -92,33 +94,82 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目錄</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#题目描述"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分析与解法"><span class="toc-number">2.</span> <span class="toc-text">分析与解法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#代码实现"><span class="toc-number">3.</span> <span class="toc-text">代码实现</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#为何要用分区表："><span class="toc-number">1.</span> <span class="toc-text">为何要用分区表：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#oracle分区方式"><span class="toc-number">2.</span> <span class="toc-text">oracle分区方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#具体分析"><span class="toc-number">3.</span> <span class="toc-text">具体分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#range分区"><span class="toc-number">3.1.</span> <span class="toc-text">range分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hash分区"><span class="toc-number">3.2.</span> <span class="toc-text">hash分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#list分区"><span class="toc-number">3.3.</span> <span class="toc-text">list分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组合分区"><span class="toc-number">3.4.</span> <span class="toc-text">组合分区</span></a></li></ol></li></ol>
 		</div>
 		
-		<h1 id="题目描述">题目描述</h1><p>给定一个长度为N的数组，找出一个最长的单调自增子序列（不一定连续，但是顺序不能乱）。<br><br></p>
-<h1 id="分析与解法">分析与解法</h1><p>最长递增子序列的解法有很多种，常用的有最长公共子序列法、动态规划、记录所有递增序列长度最大值的方法。</p>
-<ul>
-<li><p><strong>最长公共子序列法：</strong>如例子中的数组A{5，6， 7， 1， 2， 8}，则我们排序该数组得到数组A‘{1， 2， 5， 6， 7， 8}，然后找出数组A和A’的最长公共子序列即可。显然这里最长公共子序列为{5, 6, 7, 8}，也就是原数组A最长递增子序列。  在<a href="http://blog.csdn.net/yysdsyl/article/details/4226630" target="_blank" rel="external">yysdsyl</a>中有详细解释。</p>
-</li>
-<li><p><strong>动态规划：</strong>参见<a href="http://qiemengdao.iteye.com/blog/1660229" target="_blank" rel="external">http://qiemengdao.iteye.com/blog/1660229</a></p>
-</li>
-<li><strong>第三种方法：</strong>该方法的时间复杂度O(nlogn)。<br><strong>主要思路：</strong>维护一个数组MaxV[i]，<strong>记录所有长度为i的递增子序列中最大元素的最小值</strong>。<br>然后，遍历数组，如果数组中该元素a[k]大于MaxV[len-1]的值，直接len++，MaxV[len]=a[k]；否则从MaxV中从后向前，找到第一个比a[k]大的值的索引j，并将MaxV[j]更新为a[k]（即长度为j的递增序列最大值的最小值应为a[k]），查找过程可以使用二分搜索。<br>　　为了记录最大递增序列，我们使用maxIndex记录其索引，注意需要初始化maxIndex[0]=0；在a[k]&gt;MaxV[len-1] 和 a[k]<maxv[len-1]&&pos==len-1时，都需要更新maxindex的值。 博客[imzoer](http:="" blog.csdn.net="" imzoer="" article="" details="" 8100064)的解法是有问题的，本文已经更正。="" <br=""><h1 id="代码实现">代码实现</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">//&#20462;&#25913;&#21518;&#30340;&#20108;&#20998;&#25628;&#32034;&#65292;&#36820;&#22238;&#20174;&#21518;&#21521;&#21069;&#65292;&#31532;&#19968;&#20010;&#27604;target&#22823;&#30340;&#32034;&#24341; &#10;int bsearch(int *a, int s, int e,int target)&#10;&#123;&#10;    while(s&#60;=e)&#10;    &#123;&#10;        int mid = s +(e-s)/2;&#10;        if(a[mid]&#60;=target)&#10;        &#123;&#10;            s=mid+1;&#10;        &#125;&#10;        else &#10;        &#123;&#10;            e = mid-1;&#10;        &#125;&#10;    &#125;&#10;    return s;&#10;&#125;&#10;int getMaxSub(int *a, int n)&#10;&#123;&#10;    int *maxIndex = new int[n];&#10;    int *maxV = new int[n];&#10;    int len =1;&#10;    maxV[0] = a[0];&#10;    maxIndex[0]=0;&#10;    for(int i=1; i &#60;n; i++)&#10;    &#123;&#10;        if(a[i]&#62;maxV[len-1])&#10;        &#123;&#10;            maxV[len]=a[i];&#10;            maxIndex[len]=i;&#10;            len++;&#10;        &#125;&#10;        else&#10;        &#123;&#10;            int pos = bsearch(maxV,0,len-1,a[i]);&#10;            maxV[pos]= a[i];&#10;            if(pos == len-1)&#10;                maxIndex[pos]=i;&#10;        &#125;&#10;    &#125;&#10;    for(int i=0;i&#60;len;i++)&#10;    &#123;&#10;        printf(&#34;%d\t&#34;,a[maxIndex[i]]);&#10;    &#125;&#10;    printf(&#34;\n&#34;);&#10;    return len;&#10;&#125; &#10;int main()&#10;&#123;&#10;    &#10;&#10;    int a[]=&#123;&#10;        7,5,4,2,3,5,6,1,5,8,9,10&#10;    &#125;;&#10;    int b[]=&#123;&#10;        1, 5, 8, 3, 6, 7, 2, 9 &#10;    &#125;;&#10;    printf(&#34;The array is :\n&#34;);&#10;    for(int i=0;i&#60;12;i++)&#10;    &#123;&#10;        printf(&#34;%d\t&#34;,a[i]);&#10;    &#125;&#10;    printf(&#34;\nThe max ascending array is:\n&#34;);&#10;    printf(&#34;The length of max ascending array is :%d\n&#34;,getMaxSub(a,12));&#10;    //getMaxSub(b,8);&#10;        &#10;&#125;</span><br></pre></td></tr></table></figure></maxv[len-1]&&pos==len-1时，都需要更新maxindex的值。></li>
+		<p>oracle分区表</p>
+<h2 id="为何要用分区表：">为何要用分区表：</h2><ul>
+<li>增强可用性：如果表的某个分区出现故障，表在其他分区的数据仍然可用；</li>
+<li>维护方便：如果表的某个分区出现故障，需要修复数据，只修复该分区即可+ </li>
+<li>均衡I/O：可以把不同的分区映射到磁盘以平衡I/O，改善整个系统性能；</li>
+<li>改善查询性能：对分区对象的查询可以仅搜索自己关心的分区，提高检索速度。</li>
 </ul>
+<h2 id="oracle分区方式">oracle分区方式</h2><p>oracle分区表可以包含多个分区，每个分区都是一个独立的段，被存放在不同的表空间中。</p>
+<ul>
+<li>range分区</li>
+<li>list分区</li>
+<li>hash分区</li>
+<li>复合分区</li>
+</ul>
+<h2 id="具体分析">具体分析</h2><h3 id="range分区">range分区</h3><p>范围分区是根据数据表中某个域的值范围进行分区，各个记录根据该域的值确定存储的分区。常用日期、序号等进行分区，例如每五年一个分区。</p>
+<pre><code><span class="operator"><span class="keyword">create</span> <span class="keyword">table</span> pdba (id <span class="built_in">number</span>, <span class="keyword">time</span> <span class="built_in">date</span>) <span class="keyword">partition</span> <span class="keyword">by</span> range (<span class="keyword">time</span>)
+(
+<span class="keyword">partition</span> p1 <span class="keyword">values</span> less than (to_date(<span class="string">'2010-10-1'</span>, <span class="string">'yyyy-mm-dd'</span>)),
+<span class="keyword">partition</span> p2 <span class="keyword">values</span> less than (to_date(<span class="string">'2010-11-1'</span>, <span class="string">'yyyy-mm-dd'</span>)),
+<span class="keyword">partition</span> p3 <span class="keyword">values</span> less than (to_date(<span class="string">'2010-12-1'</span>, <span class="string">'yyyy-mm-dd'</span>)),
+<span class="keyword">partition</span> p4 <span class="keyword">values</span> less than (maxvalue)
+)</span>
+</code></pre><h3 id="hash分区">hash分区</h3><p>哈希分区将数据近似平均地分配到指定的几个分区中，列所在的分区是根据分区的哈希值自动分配，hash可以依赖多个列。</p>
+<pre><code><span class="operator"><span class="keyword">create</span> <span class="keyword">table</span> test
+(
+transaction_id <span class="built_in">number</span> <span class="keyword">primary</span> <span class="keyword">key</span>,
+item_id <span class="built_in">number</span>(<span class="number">8</span>) <span class="keyword">not</span> <span class="literal">null</span>
+)
+<span class="keyword">partition</span> <span class="keyword">by</span> hash(transaction_id)
+(
+<span class="keyword">partition</span> part_01 <span class="keyword">tablespace</span> tablespace01,
+<span class="keyword">partition</span> part_02 <span class="keyword">tablespace</span> tablespace02,
+<span class="keyword">partition</span> part_03 <span class="keyword">tablespace</span> tablespace03
+);</span>
+</code></pre><h3 id="list分区">list分区</h3><p>　　列表分区明确指定了根据某字段的某个具体值进行分区，而不是像范围分区那样根据字段的值范围来划分的。</p>
+<p>　　List分区也需要指定列的值，其分区值必须明确指定，该分区列只能有一个，不能像range或者hash分区那样同时指定多个列做为分区依赖列，但它的单个分区对应值可以是多个。</p>
+<p>　　在分区时必须确定分区列可能存在的值，一旦插入的列值不在分区范围内，则插入/更新就会失败，因此通常建议使用list分区时，要创建一个default分区存储那些不在指定范围内的记录，类似range分区中的maxvalue分区。</p>
+<p>　　在根据某字段，如城市代码分区时，可以指定default，把非分区规则的数据，全部放到这个default分区</p>
+<pre><code><span class="operator"><span class="keyword">create</span> <span class="keyword">table</span> custaddr
+(
+    id varchar2(<span class="number">15</span> byte) <span class="keyword">not</span> <span class="literal">null</span>,
+    areacode varchar2(<span class="number">4</span> byte)
+)
+<span class="keyword">partition</span> <span class="keyword">by</span> list (areacode)
+( 
+    <span class="keyword">partition</span> t_list025 <span class="keyword">values</span> (<span class="string">'025'</span>), 
+    <span class="keyword">partition</span> t_list372 <span class="keyword">values</span> (<span class="string">'372'</span>) , 
+    <span class="keyword">partition</span> t_list510 <span class="keyword">values</span> (<span class="string">'510'</span>),
+    <span class="keyword">partition</span> p_other <span class="keyword">values</span> (<span class="keyword">default</span>)
+)</span>
+</code></pre><h3 id="组合分区">组合分区</h3><p>如果某表按照某列分区之后，仍然较大，或者是一些其它的需求，还可以通过分区内再建子分区的方式将分区再分区，即组合分区的方式。</p>
+<p>　　组合分区呢在10g中有两种：range-hash，range-list。注意顺序，根分区只能是range分区，子分区可以是hash分区或list分区。</p>
+<p>参考：<a href="http://blog.csdn.net/hijiankang/article/details/9173877" target="_blank" rel="external">http://blog.csdn.net/hijiankang/article/details/9173877</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Oracle/">Oracle</a>
+  </div>
+
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/algorithm/">algorithm</a>
+  <a class="article-category-link" href="/categories/DataBase-System/">DataBase System</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://liuzeshu.com/2014/12/10/max-increase-arrays/" data-title="最长递增子序列 | bigbigtree" data-tsina="null" class="share clearfix">
+  <div data-url="http://liuzeshu.com/2015/07/31/oracle分区表/" data-title="oracle分区表 | bigbigtree" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -127,19 +178,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/03/10/maxheapminheap/" title="最大堆最小堆">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  最大堆最小堆</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2014/12/10/get-least-k-nums/"  title="最小的k个数">
+<a href="/2015/07/21/flex-bison-notes-md/"  title="flex bison 笔记">
  <strong>NEXT:</strong><br/> 
- <span>最小的k个数
+ <span>flex bison 笔记
 </span>
 </a>
 </div>
@@ -149,7 +192,7 @@
 	
 
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2014/12/10/max-increase-arrays/" data-title="最长递增子序列"" data-url="http://liuzeshu.com/2014/12/10/max-increase-arrays/""></div>
+	<div class="ds-thread" data-thread-key="2015/07/31/oracle分区表/" data-title="oracle分区表"" data-url="http://liuzeshu.com/2015/07/31/oracle分区表/""></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
@@ -169,7 +212,7 @@ var duoshuoQuery = {short_name:"bigbigtree"};
       
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目錄</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#题目描述"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分析与解法"><span class="toc-number">2.</span> <span class="toc-text">分析与解法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#代码实现"><span class="toc-number">3.</span> <span class="toc-text">代码实现</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#为何要用分区表："><span class="toc-number">1.</span> <span class="toc-text">为何要用分区表：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#oracle分区方式"><span class="toc-number">2.</span> <span class="toc-text">oracle分区方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#具体分析"><span class="toc-number">3.</span> <span class="toc-text">具体分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#range分区"><span class="toc-number">3.1.</span> <span class="toc-text">range分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hash分区"><span class="toc-number">3.2.</span> <span class="toc-text">hash分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#list分区"><span class="toc-number">3.3.</span> <span class="toc-text">list分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组合分区"><span class="toc-number">3.4.</span> <span class="toc-text">组合分区</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">
