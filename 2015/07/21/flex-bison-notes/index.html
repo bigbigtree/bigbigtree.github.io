@@ -45,7 +45,7 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 				<h1 class="site-name"><a href="/" title="bigbigtree">bigbigtree</a></h1>
 				<h2 class="blog-motto">空谈误国 实干兴邦</h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -64,7 +64,7 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 					<li>
 					
 					</li>
-                <li><div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div></li>
+                <li><div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div></li>
 
 				</ul>
 			</nav>	
@@ -77,7 +77,7 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/07/21/flex-bison-notes-md/" title="flex bison 笔记" itemprop="url">flex bison 笔记</a>
+      <a href="/2015/07/21/flex-bison-notes/" title="flex bison 笔记" itemprop="url">flex bison 笔记</a>
   </h1>
   <p class="article-author">By
     
@@ -85,7 +85,7 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
     </p>
   <p class="article-time">
     <time datetime="2015-07-21T10:40:54.000Z" itemprop="datePublished">Jul 21 2015</time>
-    更新日期:<time datetime="2015-07-27T01:07:22.512Z" itemprop="dateModified">Jul 27 2015</time>
+    更新日期:<time datetime="2015-08-10T02:18:52.328Z" itemprop="dateModified">Aug 10 2015</time>
     
   </p>
 </header>
@@ -93,8 +93,8 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 		
 		
 		<div id="toc" class="toc-article">
-			<strong class="toc-title">文章目錄</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用FLEX"><span class="toc-number">2.</span> <span class="toc-text">使用FLEX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bison"><span class="toc-number">3.</span> <span class="toc-text">使用bison</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析SQL"><span class="toc-number">4.</span> <span class="toc-text">分析SQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flex规范参考"><span class="toc-number">5.</span> <span class="toc-text">flex规范参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bison规范参考"><span class="toc-number">6.</span> <span class="toc-text">Bison规范参考</span></a></li></ol>
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用FLEX"><span class="toc-number">2.</span> <span class="toc-text">使用FLEX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bison"><span class="toc-number">3.</span> <span class="toc-text">使用bison</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析SQL"><span class="toc-number">4.</span> <span class="toc-text">分析SQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flex规范参考"><span class="toc-number">5.</span> <span class="toc-text">flex规范参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bison规范参考"><span class="toc-number">6.</span> <span class="toc-text">Bison规范参考</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#规则："><span class="toc-number">6.1.</span> <span class="toc-text">规则：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#符号值："><span class="toc-number">6.2.</span> <span class="toc-text">符号值：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#显式符号类型：通过$<>显式声明符号类型，一般在继承属性和使用嵌入动作返回值的时候使用。"><span class="toc-number">6.3.</span> <span class="toc-text">显式符号类型：通过$<>显式声明符号类型，一般在继承属性和使用嵌入动作返回值的时候使用。</span></a></li></ol></li></ol>
 		</div>
 		
 		<h2 id="前言">前言</h2><hr>
@@ -286,6 +286,7 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 <span class="subst">%%</span>
 <span class="attribute">...</span>用户子例程<span class="attribute">...</span>
 </code></pre><p><strong>符号</strong>：error标示错误恢复，其他bison没有预先设定。</p>
+<p><strong>bison未处理一个语法分析器时，创建一组状态，每个状态反映出一个或多个部分分析过的规则中可能的位置。当读到的记号无法结束一条规则时将这个记号压入一个内部堆栈，切换到一个新的状态，这个状态能够反映出刚刚读取的记号，这种行为叫移进</strong></p>
 <ul>
 <li><strong>终结符（记号）</strong>：词法分析器产生的符号，记号也可以是引号引起的文字字符”+”</li>
 <li><strong>非终结符</strong>：规则左部定义的符号</li>
@@ -295,10 +296,67 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 <li>%expect预计冲突个数，若bison分析的结果不一致则报编译错误</li>
 <li>若LALR分析算法很难处理，则使用LR语法分析</li>
 </ul>
-<p>作业：</p>
+<p><strong>bison程序的问题</strong></p>
 <ul>
-<li>将flex利用yyless yymore分析字符串的模式搞定</li>
-<li>搞定LALR分析与LR分析</li>
+<li>无限递归</li>
+<li>互换优先级：</li>
+<li>嵌入动作：匿名规则有时会导致难以预料的移进、归约冲突P146</li>
+</ul>
+<p><strong>C++语法分析器</strong><br>将bison文件产生对应的C++语法分析器，例如bison文件为bfile.yxx，使用-o参数可以指定输出文件，例如-do bfile.c++则会产生bfile.c++和头文件bfile.h++。其中-d选项指定产生头文件；-p（-prefix）指定语法分析器的命名空间，默认是yy。</p>
+<p><strong>%code</strong>：bison在定义模块可以接受%{之间的C代码，会被拷贝到生成的C源文件靠近开头的位置，在yyparse（）开头之前。通过限定符place可以指定代码在生成程序中的特定位置。place的值可以为top、provides和requires，分别表示文件顶部，YYSTYPE与YYLTYPE的定义之前和定义之后。</p>
+<pre><code>%<span class="tag">code</span><span class="attr_selector">[place]</span>{
+    ..<span class="class">.code</span>...
+}
+</code></pre><p><strong>结束标记</strong>：$end，标记输入的结束<br><strong>%destructor</strong>:需要特殊处理时，借助该标记获取控制权<br><strong>继承属性</strong>：bison符号值可以作为继承属性，例如从语法分析树根节点向叶节点传递信息。$-1 $0等表示当前规则左部符号之前的值。</p>
+<ul>
+<li>%type：值声明技术，继承属性的符号类型P153</li>
+<li>%inital-action{some coed}将初始化代码放到yyparse的开始部分，在标准初始化之后。注意不应放变量声明的代码，无法被访问。</li>
+<li><strong>语法反馈</strong>：从语法分析器反馈上下文信息到词法分析器；如果语法较为简单且记号不会出现在多个上下文中，可以使用词法分析器完成必要的转换；如果足够复杂，可以在语法分析器中处理。</li>
+<li><strong>文字记号</strong>：‘（’，可以使用别名识别记号</li>
+<li><strong>位置</strong>：可以使用%location显式激活位置信息，词法分析器在返回记号前记录当前行列息，在yylloc中设置。每次归约时，执行一个默认规则设置左部符号的位置范围，是右部符号的开始行列到最后一个右部符号的结束行与列。使用@$符号代表左部符号位置，第一个右部符号为@1，</li>
+<li><strong>%parse-param</strong>:在语法分析器设置分析参数</li>
+<li>%require “2.4”设置bison的最低版本</li>
+<li>库文件，bison库文件包含main和yyerror，较大的语法分析器都会自带上述两个例程</li>
+</ul>
+<p><strong>优先级和结合性声明</strong>：解决语法歧义和冲突。%prec声明规则的优先级，移进和归约冲突时，比较移进记号和归约规则的优先级，若优先级相同则检查结合性，左结合则归约，右结合则移进。典型应用：if/then/else<br><strong>dangling else ambiguity</strong><br>假定我们正在分析一个语言，其中有if-then和if-then-else语句，对应的规则如下：</p>
+<pre><code>if_stmt: <span class="keyword">IF</span> expr <span class="keyword">THEN</span> stmt
+| <span class="keyword">IF</span> expr <span class="keyword">THEN</span> stmt <span class="keyword">ELSE</span> stmt
+;
+</code></pre><p>这里我们假设IF，THEN和ELSE是特别的关键字终结符。<br>当ELSE终结符读入后作为一个预读终结符时，堆栈中的内容（假设输入是合法的）正好可以归约到第一条规则上。但是把它移进堆栈也是合理的，因为那样根据第二条规则就会导致最后的归约。<br>在这种情况下，移进或者归约都是合法的，称为移进-归约冲突（shift-reduce conflict）。Bison的设计是，用移进来解决冲突，除非有操作符优先级声明的指令。为了解释如此选择的理由，让我们与其它可选办法进行一个比较。<br>既然分析器更倾向移进ELSE，那么其结果是把else子句连接到最内层的if语句，从而使得下面两种输入是等价的：</p>
+<pre><code><span class="keyword">if</span> x <span class="keyword">then</span> <span class="keyword">if</span> y <span class="keyword">then</span> win <span class="literal">()</span>; <span class="keyword">else</span> lose;
+<span class="keyword">if</span> x <span class="keyword">then</span> <span class="keyword">do</span>; <span class="keyword">if</span> y <span class="keyword">then</span> win <span class="literal">()</span>; <span class="keyword">else</span> lose; <span class="keyword">end</span>;
+</code></pre><p>如果分析器选择归约而不是移进，那么其结果将是把else子句连接到最外层的if语句，从而导致下面两个输入是等价的：</p>
+<pre><code><span class="keyword">if</span> x <span class="keyword">then</span> <span class="keyword">if</span> y <span class="keyword">then</span> win <span class="literal">()</span>; <span class="keyword">else</span> lose;
+<span class="keyword">if</span> x <span class="keyword">then</span> <span class="keyword">do</span>; <span class="keyword">if</span> y <span class="keyword">then</span> win <span class="literal">()</span>; <span class="keyword">end</span>; <span class="keyword">else</span> lose;
+</code></pre><p>冲突的存在是因为文法有二义性：简单的嵌套的if语句的任一种解析都是合理的。已有的惯例是这种二义性的解决是通过把else子句连接到最内层的if语句而获得的；Bison是选择移进而不是归约来实现的。（一种更清晰的做法是写出无二义性的文法，但对于这种情况来说是非常困难的。）这种特殊的二义性首次出现在Algol 60的规范中，被称作’dangling else ambiguity’。<br><strong>递归规则：</strong>每个规则至少有一条非递归的规则（不指向自身）<br>左递归：内部堆栈占用较少；右递归：占用堆栈空间与记号多少相关。</p>
+<pre><code><span class="preprocessor">%</span>{
+<span class="title">#define YYMAXDEPTH    1000</span>
+<span class="preprocessor">%</span>}
+</code></pre><p>设置堆栈长度的最大值，也可以定义YYINITDEPTH控制语法分析器堆栈的长度。每个堆栈元素大小是语义值的大小（%union元素的最大长度）加上2个字节的记号编号，如果使用位置信息还需要加上16字节。</p>
+<h3 id="规则：">规则：</h3><ul>
+<li>规则由一个非终结符开始，冒号和可能为空的符号、文字记号和动作的列表构成。</li>
+<li>连续几个规则拥有相同左部，使用竖线分隔</li>
+<li>规则末尾显式声明优先级</li>
+</ul>
+<h3 id="符号值：">符号值：</h3><p>声明符号类型：通过%union列出所有可能的类型，被typedef为YYSTYPE。对于在动作代码中需要使用的符号，必须声明其类型。可以使用%type声明非终结符</p>
+<h3 id="显式符号类型：通过$&lt;&gt;显式声明符号类型，一般在继承属性和使用嵌入动作返回值的时候使用。">显式符号类型：通过$&lt;&gt;显式声明符号类型，一般在继承属性和使用嵌入动作返回值的时候使用。</h3><p><strong>记号：</strong>可以是通过%token定义的符号，或者是单引号中的各个字符。</p>
+<p><strong>记号编号:</strong>符号记号的编号通常由bison负责，一般大于任何字符编码的值，避免冲突；文字记号一般使用相应的C字符常量。P166<br>记号值：保存在yylval中，不同符号会有不同的值类型</p>
+<p>匹配浮点数<br>[0-9]+.[0-9]*</p>
+<p>%type声明非终结符类型，可以使用除了%union定义的符号类型：将自己声明的YYSTYPE放到某个头文件中，定义部分include进来，但在使用时至少有一个%type或其他符号类型声明来告知bison你在使用显式声明的符号类型。</p>
+<p><strong>可变语法和多重语法</strong><br>合并的语法分析器优缺点：代码较少，可以共享部分语法；无法同时激活两个语法分析器，可能因为相同的符号造成错误<br>多重语法分析器：关键技巧在于重新命名bison所用的函数名和变量名。<br>具体方法：通过%name-prefix “name”更改语法分析器的名字前缀，或使用-p标志实现。-d指定生成生成C文件的前缀</p>
+<ul>
+<li>yyparse语法分析程序，可以递归地进行分析</li>
+<li>y.output日志文件，展示了语法分析器的所有状态和状态的变迁，可以使用—report=all，同时记录了冲突的移进和归约动作</li>
+<li>bison库文件 -ly，包含例程main()和yyerror</li>
+<li>yyerror提供错误报告例程</li>
+<li>语义动作YYABORT;当语义动作存在非常严重错误，无法继续分析时，使得yyparse立即返回非零值。<strong>注意</strong>：包含它的规则动作会等到语法分析器读到另一个记号才会归约。</li>
+<li>YYACCEPT：使得yyparse返回零值，表明成功。当词法分析器无法判定输入结束而语法分析器可以时比较有用。包含它的规则动作会等到语法分析器读到另一个记号才会归约。P172</li>
+<li>yyclearin放弃被预读的记号，在交互式语法分析器的错误恢复中非常有用。</li>
+<li>YYDEBUG/yydebug跟踪代码，可以通过-t标志或将C预处理符号YYDEBUG定义为非零</li>
+<li>yyerrok用于错误恢复，使语法分析器回到正常状态</li>
+<li>YYERROR：通过动作代码判断错误并产生，与语法分析器检测到的错误效果一致</li>
+<li>yyparse语法分析器的入口函数，成功返回零，否则返回非零值。每次调用都从头开始。通常该函数无参数，但可以使用%parse-param或全局变量传入信息</li>
+<li>YYRECOVERING当语法分析器处于错误恢复模式，该宏返回非零值，否则返回零，可以协助确定是否需要报告发现的错误。</li>
 </ul>
   
 	</div>
@@ -319,7 +377,7 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 
 <div class="article-share" id="share">
 
-  <div data-url="http://liuzeshu.com/2015/07/21/flex-bison-notes-md/" data-title="flex bison 笔记 | bigbigtree" data-tsina="null" class="share clearfix">
+  <div data-url="http://liuzeshu.com/2015/07/21/flex-bison-notes/" data-title="flex bison 笔记 | bigbigtree" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -350,7 +408,7 @@ flex选择更长的匹配，如果两个模式都匹配，选择首先出现的�
 	
 
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2015/07/21/flex-bison-notes-md/" data-title="flex bison 笔记"" data-url="http://liuzeshu.com/2015/07/21/flex-bison-notes-md/""></div>
+	<div class="ds-thread" data-thread-key="2015/07/21/flex-bison-notes/" data-title="flex bison 笔记"" data-url="http://liuzeshu.com/2015/07/21/flex-bison-notes/""></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
@@ -369,8 +427,8 @@ var duoshuoQuery = {short_name:"bigbigtree"};
 </div>  
       
   <div id="toc" class="toc-aside">
-  <strong class="toc-title">文章目錄</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用FLEX"><span class="toc-number">2.</span> <span class="toc-text">使用FLEX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bison"><span class="toc-number">3.</span> <span class="toc-text">使用bison</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析SQL"><span class="toc-number">4.</span> <span class="toc-text">分析SQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flex规范参考"><span class="toc-number">5.</span> <span class="toc-text">flex规范参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bison规范参考"><span class="toc-number">6.</span> <span class="toc-text">Bison规范参考</span></a></li></ol>
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用FLEX"><span class="toc-number">2.</span> <span class="toc-text">使用FLEX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bison"><span class="toc-number">3.</span> <span class="toc-text">使用bison</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析SQL"><span class="toc-number">4.</span> <span class="toc-text">分析SQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flex规范参考"><span class="toc-number">5.</span> <span class="toc-text">flex规范参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bison规范参考"><span class="toc-number">6.</span> <span class="toc-text">Bison规范参考</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#规则："><span class="toc-number">6.1.</span> <span class="toc-text">规则：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#符号值："><span class="toc-number">6.2.</span> <span class="toc-text">符号值：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#显式符号类型：通过$<>显式声明符号类型，一般在继承属性和使用嵌入动作返回值的时候使用。"><span class="toc-number">6.3.</span> <span class="toc-text">显式符号类型：通过$<>显式声明符号类型，一般在继承属性和使用嵌入动作返回值的时候使用。</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">
@@ -412,7 +470,7 @@ var duoshuoQuery = {short_name:"bigbigtree"};
 
   
 <div class="categorieslist">
-	<p class="asidetitle">分類</p>
+	<p class="asidetitle">分类</p>
 		<ul>
 		
 			<li><a href="/categories/DataBase-System/" title="DataBase System">DataBase System<sup>1</sup></a></li>
@@ -433,14 +491,14 @@ var duoshuoQuery = {short_name:"bigbigtree"};
 
   
   <div class="archiveslist">
-    <p class="asidetitle"><a href="/archives">歸檔</a></p>
+    <p class="asidetitle"><a href="/archives">归档</a></p>
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a><span class="archive-list-count">6</span></li></ul>
   </div>
 
 
   
 <div class="tagslist">
-	<p class="asidetitle">標簽</p>
+	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
 		
 			<li><a href="/tags/Oracle/" title="Oracle">Oracle<sup>1</sup></a></li>
