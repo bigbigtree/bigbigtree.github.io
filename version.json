@@ -1,9 +1,9 @@
 ﻿{
   "update": "Yes",
-  "new_version": "1.0.0",
-  "apk_file_url": "https://liuzeshu.com/Demo.apk",
+  "new_version": "2.0",
+  "apk_file_url": "https://liuzeshu.com/Demo2.0.apk",
   "update_log": "1，添加删除XX接口。\r\n2，添加vip认证。\r\n3，增加统计页面。",
   "target_size": "1.6M",
-  "new_md5":"21b17ae02bac5a7bf77a10b57c4a6264",
+  "new_md5":"38c74f28d31368192ded2d1a7f98e6b7",
   "constraint": false
 }
